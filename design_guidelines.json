@@ -1,0 +1,181 @@
+{
+  "project_name": "AgencyOS - Midnight Studio CRM",
+  "design_philosophy": {
+    "theme": "Midnight Studio",
+    "core_concept": "Productivity meets Creativity. A workspace that feels like a high-end cockpit for digital artists and strategists.",
+    "emotional_tone": "Professional, Electric, Focused, Transparent",
+    "key_principles": [
+      "Dark Mode Default: Reduced eye strain for long work hours.",
+      "Data as Art: Charts and metrics should glow and pop like neon signs in the dark.",
+      "Glassmorphism: Use subtle glass layers to create depth.",
+      "Interactive Feedback: Every click or hover should feel responsive."
+    ]
+  },
+  "typography": {
+    "font_family": {
+      "heading": "Plus Jakarta Sans, sans-serif",
+      "body": "Inter, sans-serif",
+      "mono": "JetBrains Mono, monospace"
+    },
+    "google_fonts_url": "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap",
+    "scaling": {
+      "h1": "text-4xl md:text-5xl font-bold tracking-tight",
+      "h2": "text-3xl font-semibold tracking-tight",
+      "h3": "text-2xl font-semibold tracking-tight",
+      "body": "text-base font-normal leading-relaxed text-zinc-400",
+      "small": "text-sm font-medium text-zinc-500",
+      "label": "text-xs font-semibold uppercase tracking-wider text-zinc-500"
+    }
+  },
+  "colors": {
+    "palette": {
+      "background": {
+        "default": "#09090b",
+        "paper": "#18181b",
+        "subtle": "#27272a"
+      },
+      "primary": {
+        "default": "#7c3aed",
+        "hover": "#6d28d9",
+        "foreground": "#ffffff"
+      },
+      "secondary": {
+        "default": "#27272a",
+        "hover": "#3f3f46",
+        "foreground": "#ffffff"
+      },
+      "accent": {
+        "cyan": "#06b6d4",
+        "pink": "#ec4899",
+        "green": "#10b981",
+        "orange": "#f97316"
+      },
+      "text": {
+        "primary": "#f4f4f5",
+        "secondary": "#a1a1aa",
+        "muted": "#52525b"
+      },
+      "border": {
+        "default": "#27272a",
+        "active": "#52525b"
+      }
+    },
+    "gradients": {
+      "primary_glow": "bg-gradient-to-r from-violet-600 to-indigo-600",
+      "glass": "bg-zinc-950/70 backdrop-blur-md border border-white/5",
+      "card_hover": "hover:bg-zinc-900/80 transition-colors duration-300"
+    }
+  },
+  "layout": {
+    "grid_system": "Bento Grid Strategy",
+    "spacing": {
+      "container_padding": "p-6 md:p-8",
+      "card_gap": "gap-6",
+      "section_gap": "gap-8"
+    },
+    "sidebar": {
+      "width": "w-64",
+      "style": "fixed left-0 top-0 h-full border-r border-zinc-800 bg-zinc-950/95 backdrop-blur-xl z-50",
+      "collapsed_width": "w-20"
+    },
+    "structure": {
+      "dashboard": "grid grid-cols-1 md:grid-cols-4 lg:grid-cols-12 gap-6 auto-rows-[minmax(180px,auto)]",
+      "page_container": "ml-64 min-h-screen bg-zinc-950 text-zinc-100"
+    }
+  },
+  "components": {
+    "Card": {
+      "base": "rounded-xl border border-zinc-800 bg-zinc-900/50 shadow-sm",
+      "hover": "hover:border-zinc-700 hover:shadow-md transition-all duration-300",
+      "header": "p-6 pb-3",
+      "content": "p-6 pt-0"
+    },
+    "Button": {
+      "primary": "bg-violet-600 hover:bg-violet-700 text-white shadow-[0_0_15px_rgba(124,58,237,0.3)]",
+      "outline": "border border-zinc-700 bg-transparent hover:bg-zinc-800 text-zinc-300",
+      "ghost": "hover:bg-zinc-800 text-zinc-400 hover:text-white"
+    },
+    "Badge": {
+      "success": "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
+      "warning": "bg-amber-500/10 text-amber-500 border-amber-500/20",
+      "error": "bg-rose-500/10 text-rose-500 border-rose-500/20",
+      "info": "bg-blue-500/10 text-blue-500 border-blue-500/20"
+    },
+    "Input": "bg-zinc-950 border-zinc-800 focus:border-violet-500 focus:ring-violet-500/20 rounded-md",
+    "Table": {
+      "header": "text-zinc-500 font-medium uppercase text-xs tracking-wider",
+      "row": "border-b border-zinc-800 hover:bg-zinc-900/50 transition-colors"
+    }
+  },
+  "image_urls": {
+    "avatars": [
+      {
+        "url": "https://images.unsplash.com/photo-1772130204476-7b83a2e4c1c3?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAxODF8MHwxfHNlYXJjaHw0fHxjcmVhdGl2ZSUyMGFnZW5jeSUyMHRlYW0lMjBtZW1iZXIlMjBwb3J0cmFpdCUyMHByb2Zlc3Npb25hbHxlbnwwfHx8fDE3NzI3MjAxNjN8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Creative Director Female"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1584940121730-93ffb8aa88b0?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAxODF8MHwxfHNlYXJjaHwzfHxjcmVhdGl2ZSUyMGFnZW5jeSUyMHRlYW0lMjBtZW1iZXIlMjBwb3J0cmFpdCUyMHByb2Zlc3Npb25hbHxlbnwwfHx8fDE3NzI3MjAxNjN8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Senior Developer Male"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1758613654707-8bdab92f711d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAxODF8MHwxfHNlYXJjaHwyfHxjcmVhdGl2ZSUyMGFnZW5jeSUyMHRlYW0lMjBtZW1iZXIlMjBwb3J0cmFpdCUyMHByb2Zlc3Npb25hbHxlbnwwfHx8fDE3NzI3MjAxNjN8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Marketing Lead Female"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1765248148309-69d900a5bc17?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAxODF8MHwxfHNlYXJjaHwxfHxjcmVhdGl2ZSUyMGFnZW5jeSUyMHRlYW0lMjBtZW1iZXIlMjBwb3J0cmFpdCUyMHByb2Zlc3Npb25hbHxlbnwwfHx8fDE3NzI3MjAxNjN8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Account Manager Female"
+      }
+    ],
+    "logos": [
+      {
+        "url": "https://images.unsplash.com/photo-1632249309348-3b528c450fcd?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2Mzl8MHwxfHNlYXJjaHwyfHxtaW5pbWFsaXN0JTIwdGVjaCUyMGNvbXBhbnklMjBsb2dvJTIwd2hpdGUlMjBiYWNrZ3JvdW5kfGVufDB8fHx8MTc3MjcwNzM0NXww&ixlib=rb-4.1.0&q=85",
+        "description": "Tech Client Logo"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1632249266245-01221aa20f62?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2Mzl8MHwxfHNlYXJjaHwxfHxtaW5pbWFsaXN0JTIwdGVjaCUyMGNvbXBhbnklMjBsb2dvJTIwd2hpdGUlMjBiYWNrZ3JvdW5kfGVufDB8fHx8MTc3MjcwNzM0NXww&ixlib=rb-4.1.0&q=85",
+        "description": "Minimalist Brand Logo"
+      }
+    ],
+    "content_thumbnails": [
+      {
+        "url": "https://images.unsplash.com/photo-1676282827533-d6058df56a69?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzOTB8MHwxfHNlYXJjaHwyfHxtb2Rlcm4lMjBtYXJrZXRpbmclMjBjYW1wYWlnbiUyMHNvY2lhbCUyMG1lZGlhJTIwcG9zdCUyMGFic3RyYWN0fGVufDB8fHx8MTc3MjcyMDE2NHww&ixlib=rb-4.1.0&q=85",
+        "description": "Social Media Campaign 1"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1722172597269-d911054badb9?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzOTB8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBtYXJrZXRpbmclMjBjYW1wYWlnbiUyMHNvY2lhbCUyMG1lZGlhJTIwcG9zdCUyMGFic3RyYWN0fGVufDB8fHx8MTc3MjcyMDE2NHww&ixlib=rb-4.1.0&q=85",
+        "description": "Mobile App Marketing"
+      }
+    ]
+  },
+  "instructions_to_main_agent": {
+    "general": [
+      "Implement the 'Midnight Studio' theme using the provided color palette.",
+      "Use 'Plus Jakarta Sans' for all headings to give a modern, geometric feel.",
+      "The layout must be responsive. The sidebar should collapse on mobile.",
+      "Use 'Recharts' for all charts. Style them with dark backgrounds and neon lines/bars.",
+      "Ensure all text has sufficient contrast. Use Zinc-400 for secondary text, not darker."
+    ],
+    "dashboard": [
+      "Create a 'Bento Grid' layout for the main dashboard.",
+      "Include 'Financial Overview', 'Active Projects', 'Content Calendar' preview, and 'Team Performance' widgets.",
+      "Use the 'Card' component style defined above for all widgets."
+    ],
+    "kanban": [
+      "The Content Grid (Kanban) must have a horizontal scrolling container.",
+      "Columns: 'Idea', 'Briefing', 'Production', 'Review', 'Approved', 'Published'.",
+      "Cards should show: Title, Client (Badge), Due Date, and Assignee Avatar."
+    ],
+    "clients": [
+      "The Client Profile page must use Tabs for: General, Contracts, Finance, Integrations.",
+      "Use a sticky header for the client name and key actions (Edit, Archive)."
+    ]
+  },
+  "universal_guidelines": [
+    "Do not use generic centered layouts.",
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients.",
+    "Every interaction needs micro-animations - hover states, transitions.",
+    "Use 2-3x more spacing than feels comfortable.",
+    "Add data-testid to all interactive elements.",
+    "Use 'sonner' for toast notifications."
+  ]
+}
