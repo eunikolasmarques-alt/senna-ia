@@ -12,6 +12,8 @@ import Team from './pages/Team';
 import Goals from './pages/Goals';
 import Media from './pages/Media';
 import Insights from './pages/Insights';
+import Leads from './pages/Leads';
+import InternalDocs from './pages/InternalDocs';
 import './App.css';
 
 const PrivateRoute = ({ children }) => {
@@ -125,6 +127,22 @@ const App = () => {
               element={
                 <PrivateRoute>
                   <Insights />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/leads"
+              element={
+                <PrivateRoute>
+                  <Leads />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/documentos-internos"
+              element={
+                <PrivateRoute>
+                  <InternalDocs />
                 </PrivateRoute>
               }
             />

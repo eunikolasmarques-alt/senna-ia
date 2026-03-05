@@ -45,10 +45,10 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-zinc-950 p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-violet-600 to-cyan-600 bg-clip-text text-transparent mb-2">
-            AgencyOS
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent mb-2">
+            senna.ia
           </h1>
-          <p className="text-zinc-500 text-sm">Midnight Studio CRM</p>
+          <p className="text-zinc-500 text-sm">Agência de Marketing Digital</p>
         </div>
 
         <Card className="bg-zinc-900/50 border-zinc-800">
@@ -123,7 +123,7 @@ const Login = () => {
               <Button
                 type="submit"
                 data-testid="login-submit-button"
-                className="w-full bg-violet-600 hover:bg-violet-700 glow-violet"
+                className="w-full bg-blue-600 hover:bg-blue-700"
               >
                 {isLogin ? 'Entrar' : 'Criar Conta'}
               </Button>
@@ -133,7 +133,7 @@ const Login = () => {
               <button
                 onClick={() => setIsLogin(!isLogin)}
                 data-testid="toggle-auth-mode"
-                className="text-violet-500 hover:text-violet-400 transition-colors"
+                className="text-blue-500 hover:text-blue-400 transition-colors"
               >
                 {isLogin ? 'Não tem uma conta? Cadastre-se' : 'Já tem uma conta? Faça login'}
               </button>

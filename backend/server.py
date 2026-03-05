@@ -69,6 +69,9 @@ class ClientBase(BaseModel):
     notes: Optional[str] = None
     contacts: List[Dict[str, str]] = []
     logo: Optional[str] = None
+    contract_start_date: Optional[str] = None
+    contract_duration_months: int = 12
+    instagram_username: Optional[str] = None
 
 class ClientCreate(ClientBase):
     pass
@@ -223,6 +226,61 @@ class MonthlyDeliveryGoal(MonthlyDeliveryGoalBase):
     percentage: float
     status: str
     days_remaining: int
+
+class LeadBase(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    name: str
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    company: Optional[str] = None
+    source: str = "Tráfego Pago"
+    status: str = "Novo"
+    interest: Optional[str] = None
+    budget: Optional[float] = None
+    notes: Optional[str] = None
+    assigned_to: Optional[str] = None
+    last_contact: Optional[str] = None
+
+class LeadCreate(LeadBase):
+    pass
+
+class Lead(LeadBase):
+    id: str
+    created_at: str
+    updated_at: str
+
+class InternalDocumentBase(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    title: str
+    doc_type: str
+    category: str
+    file_url: Optional[str] = None
+    description: Optional[str] = None
+    tags: List[str] = []
+
+class InternalDocumentCreate(InternalDocumentBase):
+    pass
+
+class InternalDocument(InternalDocumentBase):
+    id: str
+    uploaded_at: str
+    uploaded_by: str
+
+class ServiceBase(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    name: str
+    description: str
+    deliverables: List[str] = []
+    price_range: Optional[str] = None
+    duration: Optional[str] = None
+    what_includes: List[str] = []
+
+class ServiceCreate(ServiceBase):
+    pass
+
+class Service(ServiceBase):
+    id: str
+    created_at: str
 
 # ============= AUTH HELPERS =============
 
@@ -846,6 +904,165 @@ async def get_insights_stats(client_id: Optional[str] = None, current_user: Dict
             "Conteúdo educacional gera mais salvamentos"
         ]
     }
+
+# ============= CONTRACT INFO ROUTES =============
+
+@api_router.get("/clients/{client_id}/contract-info")
+async def get_contract_info(client_id: str, current_user: Dict = Depends(get_current_user)):
+    client = await db.clients.find_one({"id": client_id}, {"_id": 0})
+    if not client:
+        raise HTTPException(status_code=404, detail="Client not found")
+    
+    if not client.get('contract_start_date'):
+        return {
+            "has_contract": False,
+            "message": "Contrato não cadastrado"
+        }
+    
+    from datetime import datetime, timezone
+    start_date = datetime.fromisoformat(client['contract_start_date'].replace('Z', '+00:00'))
+    if start_date.tzinfo is None:
+        start_date = start_date.replace(tzinfo=timezone.utc)
+    
+    now = datetime.now(timezone.utc)
+    duration_months = client.get('contract_duration_months', 12)
+    
+    # Calcular data de término
+    from dateutil.relativedelta import relativedelta
+    end_date = start_date + relativedelta(months=duration_months)
+    
+    # Tempo decorrido e restante
+    months_elapsed = (now.year - start_date.year) * 12 + (now.month - start_date.month)
+    months_remaining = duration_months - months_elapsed
+    days_remaining = (end_date - now).days
+    
+    # Progresso em %
+    progress_percentage = (months_elapsed / duration_months * 100) if duration_months > 0 else 0
+    
+    return {
+        "has_contract": True,
+        "contract_start": start_date.isoformat(),
+        "contract_end": end_date.isoformat(),
+        "duration_months": duration_months,
+        "months_elapsed": max(0, months_elapsed),
+        "months_remaining": max(0, months_remaining),
+        "days_remaining": max(0, days_remaining),
+        "progress_percentage": min(100, max(0, progress_percentage)),
+        "is_expired": now > end_date
+    }
+
+# ============= LEADS ROUTES =============
+
+@api_router.post("/leads", response_model=Lead)
+async def create_lead(lead_data: LeadCreate, current_user: Dict = Depends(get_current_user)):
+    lead_dict = lead_data.model_dump()
+    lead_dict['id'] = str(uuid.uuid4())
+    lead_dict['created_at'] = datetime.now(timezone.utc).isoformat()
+    lead_dict['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    await db.leads.insert_one(lead_dict)
+    return Lead(**lead_dict)
+
+@api_router.get("/leads", response_model=List[Lead])
+async def get_leads(status: Optional[str] = None, source: Optional[str] = None, current_user: Dict = Depends(get_current_user)):
+    query = {}
+    if status:
+        query['status'] = status
+    if source:
+        query['source'] = source
+    
+    leads = await db.leads.find(query, {"_id": 0}).to_list(None)
+    return [Lead(**l) for l in leads]
+
+@api_router.get("/leads/{lead_id}", response_model=Lead)
+async def get_lead(lead_id: str, current_user: Dict = Depends(get_current_user)):
+    lead = await db.leads.find_one({"id": lead_id}, {"_id": 0})
+    if not lead:
+        raise HTTPException(status_code=404, detail="Lead not found")
+    return Lead(**lead)
+
+@api_router.put("/leads/{lead_id}", response_model=Lead)
+async def update_lead(lead_id: str, lead_data: LeadCreate, current_user: Dict = Depends(get_current_user)):
+    lead = await db.leads.find_one({"id": lead_id})
+    if not lead:
+        raise HTTPException(status_code=404, detail="Lead not found")
+    
+    update_dict = lead_data.model_dump()
+    update_dict['updated_at'] = datetime.now(timezone.utc).isoformat()
+    await db.leads.update_one({"id": lead_id}, {"$set": update_dict})
+    
+    updated_lead = await db.leads.find_one({"id": lead_id}, {"_id": 0})
+    return Lead(**updated_lead)
+
+@api_router.delete("/leads/{lead_id}")
+async def delete_lead(lead_id: str, current_user: Dict = Depends(get_current_user)):
+    result = await db.leads.delete_one({"id": lead_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Lead not found")
+    return {"message": "Lead deleted successfully"}
+
+# ============= INTERNAL DOCUMENTS ROUTES =============
+
+@api_router.post("/internal-documents", response_model=InternalDocument)
+async def create_internal_document(doc_data: InternalDocumentCreate, current_user: Dict = Depends(get_current_user)):
+    doc_dict = doc_data.model_dump()
+    doc_dict['id'] = str(uuid.uuid4())
+    doc_dict['uploaded_at'] = datetime.now(timezone.utc).isoformat()
+    doc_dict['uploaded_by'] = current_user['id']
+    
+    await db.internal_documents.insert_one(doc_dict)
+    return InternalDocument(**doc_dict)
+
+@api_router.get("/internal-documents", response_model=List[InternalDocument])
+async def get_internal_documents(category: Optional[str] = None, current_user: Dict = Depends(get_current_user)):
+    query = {}
+    if category:
+        query['category'] = category
+    
+    documents = await db.internal_documents.find(query, {"_id": 0}).to_list(None)
+    return [InternalDocument(**d) for d in documents]
+
+@api_router.delete("/internal-documents/{doc_id}")
+async def delete_internal_document(doc_id: str, current_user: Dict = Depends(get_current_user)):
+    result = await db.internal_documents.delete_one({"id": doc_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return {"message": "Document deleted successfully"}
+
+# ============= SERVICES ROUTES =============
+
+@api_router.post("/services", response_model=Service)
+async def create_service(service_data: ServiceCreate, current_user: Dict = Depends(get_current_user)):
+    service_dict = service_data.model_dump()
+    service_dict['id'] = str(uuid.uuid4())
+    service_dict['created_at'] = datetime.now(timezone.utc).isoformat()
+    
+    await db.services.insert_one(service_dict)
+    return Service(**service_dict)
+
+@api_router.get("/services", response_model=List[Service])
+async def get_services(current_user: Dict = Depends(get_current_user)):
+    services = await db.services.find({}, {"_id": 0}).to_list(None)
+    return [Service(**s) for s in services]
+
+@api_router.put("/services/{service_id}", response_model=Service)
+async def update_service(service_id: str, service_data: ServiceCreate, current_user: Dict = Depends(get_current_user)):
+    service = await db.services.find_one({"id": service_id})
+    if not service:
+        raise HTTPException(status_code=404, detail="Service not found")
+    
+    update_dict = service_data.model_dump()
+    await db.services.update_one({"id": service_id}, {"$set": update_dict})
+    
+    updated_service = await db.services.find_one({"id": service_id}, {"_id": 0})
+    return Service(**updated_service)
+
+@api_router.delete("/services/{service_id}")
+async def delete_service(service_id: str, current_user: Dict = Depends(get_current_user)):
+    result = await db.services.delete_one({"id": service_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Service not found")
+    return {"message": "Service deleted successfully"}
 
 app.include_router(api_router)
 

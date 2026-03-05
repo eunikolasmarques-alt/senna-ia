@@ -75,6 +75,9 @@ async def seed_database():
             "due_day": 10,
             "margin": 35.0,
             "contacts": [{"name": "João Pedro", "email": "joao@techstart.com"}],
+            "contract_start_date": "2024-07-01T00:00:00+00:00",
+            "contract_duration_months": 12,
+            "instagram_username": "@techstart_oficial",
             "created_at": datetime.now(timezone.utc).isoformat(),
         },
         {
@@ -87,6 +90,9 @@ async def seed_database():
             "due_day": 15,
             "margin": 40.0,
             "contacts": [{"name": "Maria Clara", "email": "maria@bellacosmeticos.com"}],
+            "contract_start_date": "2024-08-15T00:00:00+00:00",
+            "contract_duration_months": 12,
+            "instagram_username": "@bellacosmeticos",
             "created_at": datetime.now(timezone.utc).isoformat(),
         },
         {
@@ -99,6 +105,9 @@ async def seed_database():
             "due_day": 5,
             "margin": 30.0,
             "contacts": [{"name": "Carlos Eduardo", "email": "carlos@fitlife.com"}],
+            "contract_start_date": "2024-09-01T00:00:00+00:00",
+            "contract_duration_months": 6,
+            "instagram_username": "@fitlifeacademia",
             "created_at": datetime.now(timezone.utc).isoformat(),
         },
     ]
