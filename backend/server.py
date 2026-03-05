@@ -198,6 +198,32 @@ class DashboardStats(BaseModel):
     pending_approvals: int
     team_members: int
 
+class MonthlyDeliveryGoalBase(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    client_id: str
+    month: str
+    year: int
+    total_posts_required: int = 0
+    total_reels_required: int = 0
+    total_stories_required: int = 0
+    posts_delivered: int = 0
+    reels_delivered: int = 0
+    stories_delivered: int = 0
+    deadline_date: str
+    responsible_posts: Optional[str] = None
+    responsible_reels: Optional[str] = None
+    responsible_stories: Optional[str] = None
+
+class MonthlyDeliveryGoalCreate(MonthlyDeliveryGoalBase):
+    pass
+
+class MonthlyDeliveryGoal(MonthlyDeliveryGoalBase):
+    id: str
+    created_at: str
+    percentage: float
+    status: str
+    days_remaining: int
+
 # ============= AUTH HELPERS =============
 
 def hash_password(password: str) -> str:
@@ -584,6 +610,163 @@ async def update_todo(todo_id: str, todo_data: TodoCreate, current_user: Dict = 
     
     updated_todo = await db.todos.find_one({"id": todo_id}, {"_id": 0})
     return Todo(**updated_todo)
+
+# ============= MONTHLY DELIVERY GOALS ROUTES =============
+
+def calculate_delivery_status(deadline_date: str, percentage: float) -> tuple:
+    from datetime import datetime, timezone
+    
+    if isinstance(deadline_date, str):
+        # Parse ISO format string
+        deadline = datetime.fromisoformat(deadline_date.replace('Z', '+00:00'))
+    else:
+        deadline = deadline_date
+    
+    # Ensure deadline is timezone-aware
+    if deadline.tzinfo is None:
+        deadline = deadline.replace(tzinfo=timezone.utc)
+    
+    now = datetime.now(timezone.utc)
+    days_remaining = (deadline - now).days
+    
+    if days_remaining < 0:
+        status = "Atrasado"
+    elif percentage >= 100:
+        status = "Concluído"
+    elif days_remaining < 7:
+        status = "Crítico"
+    elif days_remaining < 15:
+        status = "Em Progresso"
+    else:
+        status = "Com Tempo"
+    
+    return status, days_remaining
+
+@api_router.post("/delivery-goals", response_model=MonthlyDeliveryGoal)
+async def create_delivery_goal(goal_data: MonthlyDeliveryGoalCreate, current_user: Dict = Depends(get_current_user)):
+    goal_dict = goal_data.model_dump()
+    goal_dict['id'] = str(uuid.uuid4())
+    goal_dict['created_at'] = datetime.now(timezone.utc).isoformat()
+    
+    total_required = goal_dict['total_posts_required'] + goal_dict['total_reels_required'] + goal_dict['total_stories_required']
+    total_delivered = goal_dict['posts_delivered'] + goal_dict['reels_delivered'] + goal_dict['stories_delivered']
+    percentage = (total_delivered / total_required * 100) if total_required > 0 else 0
+    
+    goal_dict['percentage'] = round(percentage, 1)
+    status, days_remaining = calculate_delivery_status(goal_dict['deadline_date'], percentage)
+    goal_dict['status'] = status
+    goal_dict['days_remaining'] = days_remaining
+    
+    await db.delivery_goals.insert_one(goal_dict)
+    return MonthlyDeliveryGoal(**goal_dict)
+
+@api_router.get("/delivery-goals", response_model=List[MonthlyDeliveryGoal])
+async def get_delivery_goals(month: Optional[str] = None, year: Optional[int] = None, current_user: Dict = Depends(get_current_user)):
+    query = {}
+    if month:
+        query['month'] = month
+    if year:
+        query['year'] = year
+    
+    goals = await db.delivery_goals.find(query, {"_id": 0}).to_list(None)
+    
+    for goal in goals:
+        total_required = goal['total_posts_required'] + goal['total_reels_required'] + goal['total_stories_required']
+        total_delivered = goal['posts_delivered'] + goal['reels_delivered'] + goal['stories_delivered']
+        percentage = (total_delivered / total_required * 100) if total_required > 0 else 0
+        
+        goal['percentage'] = round(percentage, 1)
+        status, days_remaining = calculate_delivery_status(goal['deadline_date'], percentage)
+        goal['status'] = status
+        goal['days_remaining'] = days_remaining
+    
+    return [MonthlyDeliveryGoal(**g) for g in goals]
+
+@api_router.get("/delivery-goals/{goal_id}", response_model=MonthlyDeliveryGoal)
+async def get_delivery_goal(goal_id: str, current_user: Dict = Depends(get_current_user)):
+    goal = await db.delivery_goals.find_one({"id": goal_id}, {"_id": 0})
+    if not goal:
+        raise HTTPException(status_code=404, detail="Delivery goal not found")
+    
+    total_required = goal['total_posts_required'] + goal['total_reels_required'] + goal['total_stories_required']
+    total_delivered = goal['posts_delivered'] + goal['reels_delivered'] + goal['stories_delivered']
+    percentage = (total_delivered / total_required * 100) if total_required > 0 else 0
+    
+    goal['percentage'] = round(percentage, 1)
+    status, days_remaining = calculate_delivery_status(goal['deadline_date'], percentage)
+    goal['status'] = status
+    goal['days_remaining'] = days_remaining
+    
+    return MonthlyDeliveryGoal(**goal)
+
+@api_router.put("/delivery-goals/{goal_id}", response_model=MonthlyDeliveryGoal)
+async def update_delivery_goal(goal_id: str, goal_data: MonthlyDeliveryGoalCreate, current_user: Dict = Depends(get_current_user)):
+    goal = await db.delivery_goals.find_one({"id": goal_id})
+    if not goal:
+        raise HTTPException(status_code=404, detail="Delivery goal not found")
+    
+    update_dict = goal_data.model_dump()
+    
+    total_required = update_dict['total_posts_required'] + update_dict['total_reels_required'] + update_dict['total_stories_required']
+    total_delivered = update_dict['posts_delivered'] + update_dict['reels_delivered'] + update_dict['stories_delivered']
+    percentage = (total_delivered / total_required * 100) if total_required > 0 else 0
+    
+    update_dict['percentage'] = round(percentage, 1)
+    status, days_remaining = calculate_delivery_status(update_dict['deadline_date'], percentage)
+    update_dict['status'] = status
+    update_dict['days_remaining'] = days_remaining
+    
+    await db.delivery_goals.update_one({"id": goal_id}, {"$set": update_dict})
+    
+    updated_goal = await db.delivery_goals.find_one({"id": goal_id}, {"_id": 0})
+    return MonthlyDeliveryGoal(**updated_goal)
+
+@api_router.delete("/delivery-goals/{goal_id}")
+async def delete_delivery_goal(goal_id: str, current_user: Dict = Depends(get_current_user)):
+    result = await db.delivery_goals.delete_one({"id": goal_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Delivery goal not found")
+    return {"message": "Delivery goal deleted successfully"}
+
+@api_router.post("/delivery-goals/{goal_id}/update-progress")
+async def update_delivery_progress(goal_id: str, current_user: Dict = Depends(get_current_user)):
+    goal = await db.delivery_goals.find_one({"id": goal_id}, {"_id": 0})
+    if not goal:
+        raise HTTPException(status_code=404, detail="Delivery goal not found")
+    
+    content_cards = await db.content_cards.find({
+        "client_id": goal['client_id'],
+        "status": {"$in": ["Aprovado", "Agendado", "Publicado"]}
+    }, {"_id": 0}).to_list(None)
+    
+    posts_delivered = len([c for c in content_cards if c.get('content_type') == 'Post Feed'])
+    reels_delivered = len([c for c in content_cards if c.get('content_type') == 'Reels'])
+    stories_delivered = len([c for c in content_cards if c.get('content_type') == 'Stories'])
+    
+    total_required = goal['total_posts_required'] + goal['total_reels_required'] + goal['total_stories_required']
+    total_delivered = posts_delivered + reels_delivered + stories_delivered
+    percentage = (total_delivered / total_required * 100) if total_required > 0 else 0
+    
+    status, days_remaining = calculate_delivery_status(goal['deadline_date'], percentage)
+    
+    await db.delivery_goals.update_one(
+        {"id": goal_id},
+        {"$set": {
+            "posts_delivered": posts_delivered,
+            "reels_delivered": reels_delivered,
+            "stories_delivered": stories_delivered,
+            "percentage": round(percentage, 1),
+            "status": status,
+            "days_remaining": days_remaining
+        }}
+    )
+    
+    return {
+        "message": "Progress updated",
+        "percentage": round(percentage, 1),
+        "status": status,
+        "days_remaining": days_remaining
+    }
 
 # ============= MOCK DATA ROUTES =============
 

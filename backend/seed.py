@@ -266,6 +266,73 @@ async def seed_database():
     await db.content_cards.insert_many(content_cards)
     print(f"✅ {len(content_cards)} cards de conteúdo criados")
     
+    # Criar metas de entrega
+    await db.delivery_goals.delete_many({})
+    delivery_goals = [
+        {
+            "id": "goal-1",
+            "client_id": "client-1",
+            "month": "Janeiro",
+            "year": 2025,
+            "total_posts_required": 12,
+            "total_reels_required": 8,
+            "total_stories_required": 20,
+            "posts_delivered": 1,
+            "reels_delivered": 0,
+            "stories_delivered": 1,
+            "deadline_date": "2025-01-31T23:59:59+00:00",
+            "responsible_posts": "user-2",
+            "responsible_reels": "user-3",
+            "responsible_stories": "user-2",
+            "percentage": 5.0,
+            "status": "Crítico",
+            "days_remaining": 5,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        },
+        {
+            "id": "goal-2",
+            "client_id": "client-2",
+            "month": "Janeiro",
+            "year": 2025,
+            "total_posts_required": 8,
+            "total_reels_required": 6,
+            "total_stories_required": 15,
+            "posts_delivered": 0,
+            "reels_delivered": 1,
+            "stories_delivered": 0,
+            "deadline_date": "2025-01-31T23:59:59+00:00",
+            "responsible_posts": "user-2",
+            "responsible_reels": "user-3",
+            "responsible_stories": "user-2",
+            "percentage": 3.4,
+            "status": "Crítico",
+            "days_remaining": 5,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        },
+        {
+            "id": "goal-3",
+            "client_id": "client-3",
+            "month": "Janeiro",
+            "year": 2025,
+            "total_posts_required": 10,
+            "total_reels_required": 5,
+            "total_stories_required": 12,
+            "posts_delivered": 0,
+            "reels_delivered": 0,
+            "stories_delivered": 0,
+            "deadline_date": "2025-01-31T23:59:59+00:00",
+            "responsible_posts": "user-2",
+            "responsible_reels": "user-3",
+            "responsible_stories": "user-2",
+            "percentage": 0.0,
+            "status": "Crítico",
+            "days_remaining": 5,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        },
+    ]
+    await db.delivery_goals.insert_many(delivery_goals)
+    print(f"✅ {len(delivery_goals)} metas de entrega criadas")
+    
     print("\\n✨ Seed completo! Dados de demonstração criados com sucesso.")
     print("\\n📝 Credenciais de teste:")
     print("   Email: admin@agencyos.com")

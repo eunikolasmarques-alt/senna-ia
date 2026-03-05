@@ -11,6 +11,7 @@ import { Plus, Calendar, User, Tag, Filter } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { toast } from 'sonner';
 import ContentCardModal from '../components/ContentCardModal';
+import DeliveryDashboard from '../components/DeliveryDashboard';
 
 const API_URL = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -470,6 +471,11 @@ const Content = () => {
             onUpdate={handleUpdateCard}
           />
         )}
+
+        {/* Dashboard de Entregas Mensais */}
+        <div className="pt-12 border-t border-zinc-800">
+          <DeliveryDashboard clients={clients} users={users} />
+        </div>
       </div>
     </Layout>
   );
