@@ -7,6 +7,7 @@ import { Textarea } from './ui/textarea';
 import { X, Plus, Paperclip, Calendar, Clock, Tag, User, MessageSquare, Activity, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios';
+import FileUploadDialog from './FileUploadDialog';
 
 const API_URL = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -15,6 +16,7 @@ const ContentCardModal = ({ card, clients, users, isOpen, onClose, onUpdate }) =
   const [newComment, setNewComment] = useState('');
   const [newTag, setNewTag] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
 
   const getClientName = (clientId) => {
     const client = clients.find((c) => c.id === clientId);
@@ -86,6 +88,24 @@ const ContentCardModal = ({ card, clients, users, isOpen, onClose, onUpdate }) =
     setEditedCard({ ...editedCard, custom_tags: newTags });
   };
 
+  const handleFileUpload = (fileData) => {
+    const files = editedCard.files || [];
+    files.push({
+      name: fileData.name,
+      url: fileData.url,
+      type: fileData.type || 'url',
+      size: fileData.size,
+    });
+    setEditedCard({ ...editedCard, files });
+    toast.success('Arquivo adicionado!');
+  };
+
+  const handleRemoveFile = (index) => {
+    const files = [...(editedCard.files || [])];
+    files.splice(index, 1);
+    setEditedCard({ ...editedCard, files });
+  };
+
   if (!card) return null;
 
   return (
@@ -131,7 +151,7 @@ const ContentCardModal = ({ card, clients, users, isOpen, onClose, onUpdate }) =
                   <User size={16} className="mr-2" />
                   Membros
                 </Button>
-                <Button variant="outline" size="sm" data-testid="add-attachment">
+                <Button variant="outline" size="sm" data-testid="add-attachment" onClick={() => setIsUploadDialogOpen(true)}>
                   <Paperclip size={16} className="mr-2" />
                   Anexo
                 </Button>
@@ -262,15 +282,22 @@ const ContentCardModal = ({ card, clients, users, isOpen, onClose, onUpdate }) =
               </div>
 
               {/* Anexos */}
-              {card.files && card.files.length > 0 && (
+              {editedCard.files && editedCard.files.length > 0 && (
                 <div>
                   <h3 className="text-sm font-semibold text-zinc-400 mb-2">Anexos</h3>
                   <div className="space-y-2">
-                    {card.files.map((file, index) => (
+                    {editedCard.files.map((file, index) => (
                       <div key={index} className="flex items-center gap-3 p-3 bg-zinc-950/50 rounded-lg border border-zinc-800">
-                        <Paperclip size={16} className="text-violet-500" />
-                        <span className="text-sm flex-1">{file.name}</span>
-                        <Button variant="ghost" size="sm">Visualizar</Button>
+                        <Paperclip size={16} className="text-blue-500" />
+                        <span className="text-sm flex-1 truncate">{file.name}</span>
+                        <div className="flex gap-2">
+                          <Button variant="ghost" size="sm" onClick={() => window.open(file.url, '_blank')}>Abrir</Button>
+                          {isEditing && (
+                            <Button variant="ghost" size="sm" onClick={() => handleRemoveFile(index)}>
+                              <X size={14} />
+                            </Button>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -409,6 +436,13 @@ const ContentCardModal = ({ card, clients, users, isOpen, onClose, onUpdate }) =
           </div>
         </div>
       </DialogContent>
+
+      <FileUploadDialog
+        isOpen={isUploadDialogOpen}
+        onClose={() => setIsUploadDialogOpen(false)}
+        onUpload={handleFileUpload}
+        title="Adicionar Anexo ao Card"
+      />
     </Dialog>
   );
 };

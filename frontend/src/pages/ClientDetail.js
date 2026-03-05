@@ -7,8 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
-import { ArrowLeft, Building2, Mail, Phone, Globe, MapPin, FileText, DollarSign, BarChart } from 'lucide-react';
+import { ArrowLeft, Building2, Mail, Phone, Globe, MapPin, FileText, DollarSign, BarChart, Calendar, Clock, TrendingUp, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { Progress } from '../components/ui/progress';
 
 const API_URL = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -18,6 +19,7 @@ const ClientDetail = () => {
   const [client, setClient] = useState(null);
   const [payments, setPayments] = useState([]);
   const [documents, setDocuments] = useState([]);
+  const [contractInfo, setContractInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [editedClient, setEditedClient] = useState({});
@@ -37,6 +39,14 @@ const ClientDetail = () => {
       setEditedClient(clientRes.data);
       setPayments(paymentsRes.data);
       setDocuments(docsRes.data);
+      
+      // Buscar informações do contrato
+      try {
+        const contractRes = await axios.get(`${API_URL}/clients/${clientId}/contract-info`);
+        setContractInfo(contractRes.data);
+      } catch (error) {
+        console.log('No contract info available');
+      }
     } catch (error) {
       console.error('Failed to fetch client data:', error);
       toast.error('Erro ao carregar dados do cliente');
@@ -123,6 +133,7 @@ const ClientDetail = () => {
         <Tabs defaultValue="general" className="w-full">
           <TabsList className="bg-zinc-900/50 border border-zinc-800">
             <TabsTrigger value="general" data-testid="tab-general">Informações Gerais</TabsTrigger>
+            <TabsTrigger value="contract" data-testid="tab-contract">Contrato</TabsTrigger>
             <TabsTrigger value="documents" data-testid="tab-documents">Contratos e Documentos</TabsTrigger>
             <TabsTrigger value="finance" data-testid="tab-finance">Dados Financeiros</TabsTrigger>
             <TabsTrigger value="integrations" data-testid="tab-integrations">Integrações</TabsTrigger>
@@ -194,7 +205,146 @@ const ClientDetail = () => {
                       className="mt-1"
                     />
                   </div>
+                  <div>
+                    <Label>Instagram</Label>
+                    <Input
+                      value={isEditing ? editedClient.instagram_username || '' : client.instagram_username || ''}
+                      onChange={(e) => setEditedClient({ ...editedClient, instagram_username: e.target.value })}
+                      disabled={!isEditing}
+                      placeholder="@username"
+                      className="mt-1"
+                    />
+                  </div>
                 </div>
+
+                <div className="pt-4 border-t border-zinc-800 mt-6">
+                  <h3 className="text-sm font-semibold text-zinc-400 mb-4">Informações de Contrato</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <Label>Data de Início do Contrato</Label>
+                      <Input
+                        type="date"
+                        value={isEditing ? (editedClient.contract_start_date || '').split('T')[0] : (client.contract_start_date || '').split('T')[0]}
+                        onChange={(e) => setEditedClient({ ...editedClient, contract_start_date: e.target.value ? `${e.target.value}T00:00:00+00:00` : '' })}
+                        disabled={!isEditing}
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label>Duração do Contrato (meses)</Label>
+                      <Input
+                        type="number"
+                        min="1"
+                        value={isEditing ? editedClient.contract_duration_months || 12 : client.contract_duration_months || 12}
+                        onChange={(e) => setEditedClient({ ...editedClient, contract_duration_months: parseInt(e.target.value) || 12 })}
+                        disabled={!isEditing}
+                        className="mt-1"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="contract" className="mt-6">
+            <Card className="bg-zinc-900/50 border-zinc-800">
+              <CardHeader>
+                <CardTitle>Informações do Contrato</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {contractInfo && contractInfo.has_contract ? (
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <Card className="bg-zinc-950/50 border-zinc-800">
+                        <CardContent className="p-6">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm text-zinc-500">Tempo Útil</span>
+                            <Calendar className="text-blue-500" size={20} />
+                          </div>
+                          <p className="text-3xl font-bold text-blue-500">
+                            {contractInfo.months_elapsed} {contractInfo.months_elapsed === 1 ? 'mês' : 'meses'}
+                          </p>
+                          <p className="text-xs text-zinc-600 mt-1">Decorridos desde o início</p>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="bg-zinc-950/50 border-zinc-800">
+                        <CardContent className="p-6">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm text-zinc-500">Até Renovação</span>
+                            <Clock className="text-orange-500" size={20} />
+                          </div>
+                          <p className="text-3xl font-bold text-orange-500">
+                            {contractInfo.months_remaining} {contractInfo.months_remaining === 1 ? 'mês' : 'meses'}
+                          </p>
+                          <p className="text-xs text-zinc-600 mt-1">{contractInfo.days_remaining} dias restantes</p>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="bg-zinc-950/50 border-zinc-800">
+                        <CardContent className="p-6">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm text-zinc-500">Duração Total</span>
+                            <TrendingUp className="text-emerald-500" size={20} />
+                          </div>
+                          <p className="text-3xl font-bold text-emerald-500">
+                            {contractInfo.duration_months} {contractInfo.duration_months === 1 ? 'mês' : 'meses'}
+                          </p>
+                          <p className="text-xs text-zinc-600 mt-1">Duração do contrato</p>
+                        </CardContent>
+                      </Card>
+                    </div>
+
+                    <div>
+                      <h3 className="text-sm font-semibold text-zinc-400 mb-3">Progresso do Contrato</h3>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm">Tempo decorrido</span>
+                          <span className="text-sm font-semibold text-blue-500">{contractInfo.progress_percentage.toFixed(1)}%</span>
+                        </div>
+                        <Progress value={contractInfo.progress_percentage} className="h-3" style={{ '--progress-color': '#0066FF' }} />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 pt-4 border-t border-zinc-800">
+                      <div>
+                        <Label className="text-xs text-zinc-500">Data de Início</Label>
+                        <p className="text-sm font-medium mt-1">{new Date(contractInfo.contract_start).toLocaleDateString('pt-BR')}</p>
+                      </div>
+                      <div>
+                        <Label className="text-xs text-zinc-500">Data de Término</Label>
+                        <p className="text-sm font-medium mt-1">{new Date(contractInfo.contract_end).toLocaleDateString('pt-BR')}</p>
+                      </div>
+                    </div>
+
+                    {contractInfo.is_expired && (
+                      <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+                        <div className="flex items-center gap-2 text-red-500">
+                          <AlertCircle size={20} />
+                          <span className="font-semibold">Contrato Expirado</span>
+                        </div>
+                        <p className="text-sm text-zinc-400 mt-1">Este contrato já expirou. Entre em contato com o cliente para renovação.</p>
+                      </div>
+                    )}
+
+                    {!contractInfo.is_expired && contractInfo.months_remaining <= 2 && (
+                      <div className="p-4 bg-orange-500/10 border border-orange-500/20 rounded-lg">
+                        <div className="flex items-center gap-2 text-orange-500">
+                          <AlertCircle size={20} />
+                          <span className="font-semibold">Renovação Próxima</span>
+                        </div>
+                        <p className="text-sm text-zinc-400 mt-1">O contrato está próximo do vencimento. Considere iniciar negociações de renovação.</p>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <Calendar className="mx-auto text-zinc-600 mb-4" size={48} />
+                    <p className="text-zinc-500 mb-4">Nenhum contrato cadastrado</p>
+                    <p className="text-sm text-zinc-600">Adicione as informações de contrato nas Informações Gerais do cliente.</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

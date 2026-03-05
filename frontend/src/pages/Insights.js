@@ -2,18 +2,31 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Layout from '../components/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { TrendingUp, Heart, MessageCircle, Bookmark, Share2, Users, Clock, Lightbulb } from 'lucide-react';
+import { Button } from '../components/ui/button';
+import { TrendingUp, Heart, MessageCircle, Bookmark, Share2, Users, Clock, Lightbulb, Plus } from 'lucide-react';
 
 const API_URL = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 const Insights = () => {
   const [publishedContent, setPublishedContent] = useState([]);
   const [stats, setStats] = useState(null);
+  const [clients, setClients] = useState([]);
+  const [filterClient, setFilterClient] = useState('all');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchInsights();
+    fetchClients();
   }, []);
+
+  const fetchClients = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/clients`);
+      setClients(response.data);
+    } catch (error) {
+      console.error('Failed to fetch clients:', error);
+    }
+  };
 
   const fetchInsights = async () => {
     try {
@@ -59,9 +72,30 @@ const Insights = () => {
   return (
     <Layout>
       <div className="space-y-8" data-testid="insights-page">
-        <div>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-2">Insights de Conteúdo</h1>
-          <p className="text-base text-zinc-400">Performance e análise de conteúdo publicado</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-2">Insights de Conteúdo</h1>
+            <p className="text-base text-zinc-400">Performance e análise de conteúdo publicado</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <select
+              value={filterClient}
+              onChange={(e) => setFilterClient(e.target.value)}
+              className="px-4 py-2 bg-zinc-900/50 border border-zinc-800 rounded-md text-zinc-100"
+              data-testid="filter-client-insights"
+            >
+              <option value="all">Todos os clientes</option>
+              {clients.map((client) => (
+                <option key={client.id} value={client.id}>
+                  {client.name}
+                </option>
+              ))}
+            </select>
+            <Button className="bg-blue-600 hover:bg-blue-700">
+              <Plus className="mr-2" size={20} />
+              Agendar Post
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
