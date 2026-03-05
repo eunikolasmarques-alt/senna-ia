@@ -6,9 +6,11 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
-import { Plus, Calendar, User, Tag } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import { Plus, Calendar, User, Tag, Filter } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { toast } from 'sonner';
+import ContentCardModal from '../components/ContentCardModal';
 
 const API_URL = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -24,22 +26,59 @@ const COLUMNS = [
 
 const Content = () => {
   const [contentCards, setContentCards] = useState([]);
+  const [filteredCards, setFilteredCards] = useState([]);
   const [clients, setClients] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedCard, setSelectedCard] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Filtros
+  const [filterClient, setFilterClient] = useState('all');
+  const [filterMonth, setFilterMonth] = useState('all');
+  
   const [newCard, setNewCard] = useState({
     title: '',
     content_type: 'Post Feed',
     client_id: '',
     assignee_id: '',
     publication_date: '',
+    publication_time: '',
+    delivery_date: '',
+    delivery_time: '',
     status: 'Briefing',
+    description: '',
+    custom_tags: [],
+    comments: [],
+    activities: [],
   });
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    applyFilters();
+  }, [filterClient, filterMonth, contentCards]);
+
+  const applyFilters = () => {
+    let filtered = [...contentCards];
+
+    if (filterClient !== 'all') {
+      filtered = filtered.filter((card) => card.client_id === filterClient);
+    }
+
+    if (filterMonth !== 'all') {
+      filtered = filtered.filter((card) => {
+        if (!card.publication_date) return false;
+        const cardMonth = new Date(card.publication_date).getMonth() + 1;
+        return cardMonth.toString() === filterMonth;
+      });
+    }
+
+    setFilteredCards(filtered);
+  };
 
   const fetchData = async () => {
     try {
@@ -49,6 +88,7 @@ const Content = () => {
         axios.get(`${API_URL}/users`),
       ]);
       setContentCards(contentRes.data);
+      setFilteredCards(contentRes.data);
       setClients(clientsRes.data);
       setUsers(usersRes.data);
     } catch (error) {
@@ -72,12 +112,33 @@ const Content = () => {
         client_id: '',
         assignee_id: '',
         publication_date: '',
+        publication_time: '',
+        delivery_date: '',
+        delivery_time: '',
         status: 'Briefing',
+        description: '',
+        custom_tags: [],
+        comments: [],
+        activities: [],
       });
     } catch (error) {
       console.error('Failed to create card:', error);
       toast.error('Erro ao criar card');
     }
+  };
+
+  const handleCardClick = (card) => {
+    setSelectedCard(card);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedCard(null);
+  };
+
+  const handleUpdateCard = () => {
+    fetchData();
   };
 
   const onDragEnd = async (result) => {
@@ -231,10 +292,71 @@ const Content = () => {
           </Dialog>
         </div>
 
+        {/* Filtros */}
+        <Card className="bg-zinc-900/50 border-zinc-800">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-4">
+              <Filter className="text-zinc-500" size={20} />
+              <div className="flex gap-4 flex-1">
+                <div className="flex-1">
+                  <Label className="text-xs text-zinc-500 mb-1">Filtrar por Cliente</Label>
+                  <select
+                    value={filterClient}
+                    onChange={(e) => setFilterClient(e.target.value)}
+                    className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-md text-zinc-100 text-sm"
+                    data-testid="filter-client"
+                  >
+                    <option value="all">Todos os clientes</option>
+                    {clients.map((client) => (
+                      <option key={client.id} value={client.id}>
+                        {client.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex-1">
+                  <Label className="text-xs text-zinc-500 mb-1">Filtrar por Mês</Label>
+                  <select
+                    value={filterMonth}
+                    onChange={(e) => setFilterMonth(e.target.value)}
+                    className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-md text-zinc-100 text-sm"
+                    data-testid="filter-month"
+                  >
+                    <option value="all">Todos os meses</option>
+                    <option value="1">Janeiro</option>
+                    <option value="2">Fevereiro</option>
+                    <option value="3">Março</option>
+                    <option value="4">Abril</option>
+                    <option value="5">Maio</option>
+                    <option value="6">Junho</option>
+                    <option value="7">Julho</option>
+                    <option value="8">Agosto</option>
+                    <option value="9">Setembro</option>
+                    <option value="10">Outubro</option>
+                    <option value="11">Novembro</option>
+                    <option value="12">Dezembro</option>
+                  </select>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setFilterClient('all');
+                  setFilterMonth('all');
+                }}
+                data-testid="clear-filters"
+              >
+                Limpar Filtros
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
             {COLUMNS.map((column) => {
-              const cards = contentCards.filter((card) => card.status === column.id);
+              const cards = filteredCards.filter((card) => card.status === column.id);
               return (
                 <div key={column.id} className="min-w-[320px]" data-testid={`column-${column.id}`}>
                   <div
@@ -273,7 +395,8 @@ const Content = () => {
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
-                                className={`bg-zinc-900/80 border-zinc-800 hover:border-zinc-700 transition-all ${
+                                onClick={() => handleCardClick(card)}
+                                className={`bg-zinc-900/80 border-zinc-800 hover:border-zinc-700 transition-all cursor-pointer ${
                                   snapshot.isDragging ? 'shadow-xl ring-2 ring-violet-500' : ''
                                 }`}
                                 data-testid={`content-card-${card.id}`}
@@ -285,6 +408,24 @@ const Content = () => {
                                       {card.content_type}
                                     </span>
                                   </div>
+
+                                  {card.custom_tags && card.custom_tags.length > 0 && (
+                                    <div className="flex gap-1 flex-wrap">
+                                      {card.custom_tags.slice(0, 2).map((tag, idx) => (
+                                        <span
+                                          key={idx}
+                                          className="text-xs px-2 py-1 rounded-full"
+                                          style={{
+                                            backgroundColor: `${tag.color}20`,
+                                            color: tag.color,
+                                            border: `1px solid ${tag.color}40`,
+                                          }}
+                                        >
+                                          {tag.label}
+                                        </span>
+                                      ))}
+                                    </div>
+                                  )}
 
                                   <div className="space-y-2 text-xs">
                                     <div className="flex items-center gap-2 text-zinc-500">
@@ -318,6 +459,17 @@ const Content = () => {
             })}
           </div>
         </DragDropContext>
+
+        {selectedCard && (
+          <ContentCardModal
+            card={selectedCard}
+            clients={clients}
+            users={users}
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+            onUpdate={handleUpdateCard}
+          />
+        )}
       </div>
     </Layout>
   );

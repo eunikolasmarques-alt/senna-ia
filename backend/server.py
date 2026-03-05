@@ -99,15 +99,25 @@ class ContentCardBase(BaseModel):
     title: str
     content_type: str
     publication_date: Optional[str] = None
+    publication_time: Optional[str] = None
+    delivery_date: Optional[str] = None
+    delivery_time: Optional[str] = None
     assignee_id: Optional[str] = None
     client_id: str
     status: str = "Briefing"
     file_url: Optional[str] = None
+    files: List[Dict[str, str]] = []
     caption: Optional[str] = None
+    description: Optional[str] = None
     tags: List[str] = []
+    custom_tags: List[Dict[str, str]] = []
     comments: List[Dict[str, Any]] = []
+    activities: List[Dict[str, Any]] = []
     approval_status: str = "Pendente"
     approval_notes: Optional[str] = None
+    approval_sent_at: Optional[str] = None
+    members: List[str] = []
+    checklist: List[Dict[str, Any]] = []
 
 class ContentCardCreate(ContentCardBase):
     pass
@@ -391,6 +401,78 @@ async def delete_content(content_id: str, current_user: Dict = Depends(get_curre
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Content not found")
     return {"message": "Content deleted successfully"}
+
+@api_router.post("/content/{content_id}/comment")
+async def add_comment(content_id: str, comment: Dict[str, Any], current_user: Dict = Depends(get_current_user)):
+    content = await db.content_cards.find_one({"id": content_id})
+    if not content:
+        raise HTTPException(status_code=404, detail="Content not found")
+    
+    new_comment = {
+        "id": str(uuid.uuid4()),
+        "user_id": current_user["id"],
+        "user_name": current_user["name"],
+        "text": comment["text"],
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.content_cards.update_one(
+        {"id": content_id},
+        {"$push": {"comments": new_comment}}
+    )
+    
+    return new_comment
+
+@api_router.post("/content/{content_id}/activity")
+async def add_activity(content_id: str, activity: Dict[str, Any], current_user: Dict = Depends(get_current_user)):
+    content = await db.content_cards.find_one({"id": content_id})
+    if not content:
+        raise HTTPException(status_code=404, detail="Content not found")
+    
+    new_activity = {
+        "id": str(uuid.uuid4()),
+        "user_id": current_user["id"],
+        "user_name": current_user["name"],
+        "action": activity["action"],
+        "details": activity.get("details", ""),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.content_cards.update_one(
+        {"id": content_id},
+        {"$push": {"activities": new_activity}}
+    )
+    
+    return new_activity
+
+@api_router.post("/content/{content_id}/send-approval")
+async def send_approval(content_id: str, current_user: Dict = Depends(get_current_user)):
+    content = await db.content_cards.find_one({"id": content_id}, {"_id": 0})
+    if not content:
+        raise HTTPException(status_code=404, detail="Content not found")
+    
+    client = await db.clients.find_one({"id": content["client_id"]}, {"_id": 0})
+    if not client:
+        raise HTTPException(status_code=404, detail="Client not found")
+    
+    # Aqui você integraria com WhatsApp API
+    # Por enquanto, apenas mockamos o envio
+    
+    await db.content_cards.update_one(
+        {"id": content_id},
+        {
+            "$set": {
+                "approval_sent_at": datetime.now(timezone.utc).isoformat(),
+                "status": "Aguardando Aprovação"
+            }
+        }
+    )
+    
+    return {
+        "message": "Aprovação enviada com sucesso",
+        "sent_to": client.get("contacts", [{}])[0].get("name", "Cliente"),
+        "method": "WhatsApp"
+    }
 
 # ============= DOCUMENT ROUTES =============
 
