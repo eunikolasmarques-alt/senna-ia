@@ -3,23 +3,30 @@ import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Users, FileText, Briefcase, Target, TrendingUp, BarChart3, UserPlus, FolderOpen, LogOut, Menu, X } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
+const ALL_MENU_ITEMS = [
+  { key: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', testId: 'nav-dashboard' },
+  { key: 'clientes', icon: Briefcase, label: 'Clientes', path: '/clientes', testId: 'nav-clients' },
+  { key: 'conteudo', icon: FileText, label: 'Conteúdo', path: '/conteudo', testId: 'nav-content' },
+  { key: 'financeiro', icon: TrendingUp, label: 'Financeiro', path: '/financeiro', testId: 'nav-financial' },
+  { key: 'leads', icon: UserPlus, label: 'CRM Leads', path: '/leads', testId: 'nav-leads' },
+  { key: 'colaboradores', icon: Users, label: 'Colaboradores', path: '/colaboradores', testId: 'nav-team' },
+  { key: 'metas', icon: Target, label: 'Metas', path: '/metas', testId: 'nav-goals' },
+  { key: 'midia-paga', icon: BarChart3, label: 'Mídia Paga', path: '/midia-paga', testId: 'nav-media' },
+  { key: 'insights', icon: BarChart3, label: 'Insights', path: '/insights', testId: 'nav-insights' },
+  { key: 'documentos-internos', icon: FolderOpen, label: 'Docs Internos', path: '/documentos-internos', testId: 'nav-docs' },
+];
+
 const Sidebar = () => {
   const location = useLocation();
   const { logout, user } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  const menuItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', testId: 'nav-dashboard' },
-    { icon: Briefcase, label: 'Clientes', path: '/clientes', testId: 'nav-clients' },
-    { icon: FileText, label: 'Conteúdo', path: '/conteudo', testId: 'nav-content' },
-    { icon: TrendingUp, label: 'Financeiro', path: '/financeiro', testId: 'nav-financial' },
-    { icon: UserPlus, label: 'CRM Leads', path: '/leads', testId: 'nav-leads' },
-    { icon: Users, label: 'Colaboradores', path: '/colaboradores', testId: 'nav-team' },
-    { icon: Target, label: 'Metas', path: '/metas', testId: 'nav-goals' },
-    { icon: BarChart3, label: 'Mídia Paga', path: '/midia-paga', testId: 'nav-media' },
-    { icon: BarChart3, label: 'Insights', path: '/insights', testId: 'nav-insights' },
-    { icon: FolderOpen, label: 'Docs Internos', path: '/documentos-internos', testId: 'nav-docs' },
-  ];
+  const isAdmin = user && (user.role === 'Admin' || user.role === 'Sócio' || user.role === 'Admin/Sócio');
+
+  // Admin vê tudo; outros filtram por tab_permissions
+  const menuItems = isAdmin || !user?.tab_permissions
+    ? ALL_MENU_ITEMS
+    : ALL_MENU_ITEMS.filter(item => user.tab_permissions.includes(item.key));
 
   return (
     <>
