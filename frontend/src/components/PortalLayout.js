@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useClientAuth } from '../contexts/ClientAuthContext';
-import { LayoutDashboard, FileText, DollarSign, FileCheck, MessageSquare, LogOut, Building2 } from 'lucide-react';
+import { LayoutDashboard, FileText, DollarSign, FileCheck, MessageSquare, LogOut, Building2, FolderOpen } from 'lucide-react';
 
 const PortalLayout = ({ children }) => {
   const location = useLocation();
@@ -16,6 +16,7 @@ const PortalLayout = ({ children }) => {
   const menuItems = [
     { icon: LayoutDashboard, label: 'Painel', path: '/portal/dashboard', testId: 'portal-nav-dashboard' },
     { icon: FileText, label: 'Conteúdos', path: '/portal/content', testId: 'portal-nav-content' },
+    { icon: FolderOpen, label: 'Meus Arquivos', path: '/portal/files', testId: 'portal-nav-files' },
     { icon: DollarSign, label: 'Pagamentos', path: '/portal/payments', testId: 'portal-nav-payments' },
     { icon: FileCheck, label: 'Contrato', path: '/portal/contract', testId: 'portal-nav-contract' },
     { icon: MessageSquare, label: 'Mensagens', path: '/portal/messages', testId: 'portal-nav-messages' },
