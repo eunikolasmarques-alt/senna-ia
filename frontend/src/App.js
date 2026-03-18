@@ -22,6 +22,7 @@ import PortalContent from './pages/portal/PortalContent';
 import PortalPayments from './pages/portal/PortalPayments';
 import PortalContract from './pages/portal/PortalContract';
 import PortalMessages from './pages/portal/PortalMessages';
+import PortalFiles from './pages/portal/PortalFiles';
 import './App.css';
 
 const PrivateRoute = ({ children }) => {
@@ -214,7 +215,15 @@ const App = () => {
                   </PortalRoute>
                 }
               />
-              
+              <Route
+                path="/portal/files"
+                element={
+                  <PortalRoute>
+                    <PortalFiles />
+                  </PortalRoute>
+                }
+              />
+
               <Route path="/" element={<Navigate to="/dashboard" />} />
             </Routes>
             <Toaster position="top-right" richColors />
