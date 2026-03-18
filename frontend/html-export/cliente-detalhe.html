@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>senna.ia - Detalhes do Cliente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        zinc: { 400: '#a1a1aa', 500: '#71717a', 600: '#52525b', 700: '#3f3f46', 800: '#27272a', 900: '#18181b', 950: '#09090b' },
+                        blue: { 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
+                        cyan: { 500: '#06b6d4', 600: '#0891b2' },
+                        emerald: { 500: '#10b981', 600: '#059669' },
+                        orange: { 500: '#f97316' },
+                        violet: { 500: '#8b5cf6', 600: '#7c3aed' },
+                        rose: { 500: '#f43f5e' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .sidebar-link.active { background-color: #2563eb; color: white; }
+        .sidebar-link:hover:not(.active) { background-color: #27272a; color: white; }
+        .tab-btn.active { border-bottom: 2px solid #2563eb; color: white; }
+    </style>
+</head>
+<body class="min-h-screen bg-zinc-950 text-zinc-100">
+    <div class="flex">
+        <!-- Sidebar (mesmo das outras páginas) -->
+        <aside class="fixed left-0 top-0 h-full w-64 bg-zinc-950/95 border-r border-zinc-800 z-50">
+            <div class="flex flex-col h-full">
+                <div class="p-6 border-b border-zinc-800">
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">senna.ia</h1>
+                    <p class="text-xs text-zinc-500 mt-1">Agência de Marketing</p>
+                </div>
+                <nav class="flex-1 p-4 space-y-2">
+                    <a href="dashboard.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-chart-line w-5"></i><span class="font-medium">Dashboard</span>
+                    </a>
+                    <a href="clientes.html" class="sidebar-link active flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-briefcase w-5"></i><span class="font-medium">Clientes</span>
+                    </a>
+                    <a href="conteudo.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-file-alt w-5"></i><span class="font-medium">Conteúdo</span>
+                    </a>
+                    <a href="financeiro.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-chart-bar w-5"></i><span class="font-medium">Financeiro</span>
+                    </a>
+                    <a href="leads.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-user-plus w-5"></i><span class="font-medium">CRM Leads</span>
+                    </a>
+                    <a href="colaboradores.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-users w-5"></i><span class="font-medium">Colaboradores</span>
+                    </a>
+                    <a href="metas.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-bullseye w-5"></i><span class="font-medium">Metas</span>
+                    </a>
+                    <a href="midia-paga.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-ad w-5"></i><span class="font-medium">Mídia Paga</span>
+                    </a>
+                    <a href="insights.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-lightbulb w-5"></i><span class="font-medium">Insights</span>
+                    </a>
+                    <a href="documentos.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-folder-open w-5"></i><span class="font-medium">Docs Internos</span>
+                    </a>
+                </nav>
+                <div class="p-4 border-t border-zinc-800">
+                    <div class="mb-4 p-3 bg-zinc-900/50 rounded-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-cyan-600 flex items-center justify-center text-white font-bold">C</div>
+                            <div class="flex-1 overflow-hidden">
+                                <p class="text-sm font-semibold text-white truncate">Carolina Silva</p>
+                                <p class="text-xs text-zinc-500 truncate">Admin</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="index.html" class="w-full flex items-center gap-3 px-4 py-3 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors">
+                        <i class="fas fa-sign-out-alt w-5"></i><span>Sair</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="ml-64 flex-1 p-8">
+            <div class="space-y-8">
+                <!-- Back Button -->
+                <a href="clientes.html" class="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Voltar</span>
+                </a>
+
+                <!-- Client Header -->
+                <div class="flex items-start justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-violet-600 to-cyan-600 flex items-center justify-center">
+                            <i class="fas fa-building text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-4xl font-bold tracking-tight">TechStart Solutions</h1>
+                            <p class="text-zinc-400 mt-1">Tecnologia</p>
+                        </div>
+                    </div>
+                    <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
+                        Editar Cliente
+                    </button>
+                </div>
+
+                <!-- Tabs -->
+                <div class="border-b border-zinc-800">
+                    <div class="flex gap-8">
+                        <button class="tab-btn active pb-4 text-zinc-400 font-medium transition-colors" onclick="showTab('general')">Informações Gerais</button>
+                        <button class="tab-btn pb-4 text-zinc-400 font-medium transition-colors" onclick="showTab('contract')">Contrato</button>
+                        <button class="tab-btn pb-4 text-zinc-400 font-medium transition-colors" onclick="showTab('portal')">Portal do Cliente</button>
+                        <button class="tab-btn pb-4 text-zinc-400 font-medium transition-colors" onclick="showTab('documents')">Documentos</button>
+                        <button class="tab-btn pb-4 text-zinc-400 font-medium transition-colors" onclick="showTab('finance')">Dados Financeiros</button>
+                        <button class="tab-btn pb-4 text-zinc-400 font-medium transition-colors" onclick="showTab('integrations')">Integrações</button>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Informações Gerais -->
+                <div id="tab-general" class="tab-content">
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg">
+                        <div class="p-6 border-b border-zinc-800">
+                            <h3 class="text-lg font-semibold">Informações Básicas</h3>
+                        </div>
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-zinc-400 mb-1">Nome da Empresa</label>
+                                    <input type="text" value="TechStart Solutions" disabled class="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-md text-zinc-100">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-zinc-400 mb-1">CNPJ</label>
+                                    <input type="text" value="12.345.678/0001-90" disabled class="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-md text-zinc-100">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-zinc-400 mb-1">Segmento</label>
+                                    <input type="text" value="Tecnologia" disabled class="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-md text-zinc-100">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-zinc-400 mb-1">Website</label>
+                                    <input type="text" value="techstart.com.br" disabled class="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-md text-zinc-100">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-zinc-400 mb-1">Status</label>
+                                    <select disabled class="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-md text-zinc-100">
+                                        <option selected>Ativo</option>
+                                        <option>Pausado</option>
+                                        <option>Cancelado</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-zinc-400 mb-1">Instagram</label>
+                                    <input type="text" value="@techstart" disabled class="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-md text-zinc-100">
+                                </div>
+                            </div>
+
+                            <div class="mt-6 pt-6 border-t border-zinc-800">
+                                <h4 class="text-sm font-semibold text-zinc-400 mb-4">Informações de Contrato</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-sm font-medium text-zinc-400 mb-1">Data de Início</label>
+                                        <input type="date" value="2024-07-01" disabled class="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-md text-zinc-100">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-zinc-400 mb-1">Duração (meses)</label>
+                                        <input type="number" value="12" disabled class="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-md text-zinc-100">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Contrato -->
+                <div id="tab-contract" class="tab-content hidden">
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg">
+                        <div class="p-6 border-b border-zinc-800">
+                            <h3 class="text-lg font-semibold">Informações do Contrato</h3>
+                        </div>
+                        <div class="p-6 space-y-6">
+                            <!-- Stats -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div class="bg-zinc-950/50 border border-zinc-800 rounded-lg p-6">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-sm text-zinc-500">Tempo Útil</span>
+                                        <i class="fas fa-calendar text-blue-500"></i>
+                                    </div>
+                                    <p class="text-3xl font-bold text-blue-500">6 meses</p>
+                                    <p class="text-xs text-zinc-600 mt-1">Decorridos desde o início</p>
+                                </div>
+                                <div class="bg-zinc-950/50 border border-zinc-800 rounded-lg p-6">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-sm text-zinc-500">Até Renovação</span>
+                                        <i class="fas fa-clock text-orange-500"></i>
+                                    </div>
+                                    <p class="text-3xl font-bold text-orange-500">6 meses</p>
+                                    <p class="text-xs text-zinc-600 mt-1">180 dias restantes</p>
+                                </div>
+                                <div class="bg-zinc-950/50 border border-zinc-800 rounded-lg p-6">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-sm text-zinc-500">Duração Total</span>
+                                        <i class="fas fa-chart-line text-emerald-500"></i>
+                                    </div>
+                                    <p class="text-3xl font-bold text-emerald-500">12 meses</p>
+                                    <p class="text-xs text-zinc-600 mt-1">Duração do contrato</p>
+                                </div>
+                            </div>
+
+                            <!-- Progress -->
+                            <div>
+                                <h4 class="text-sm font-semibold text-zinc-400 mb-3">Progresso do Contrato</h4>
+                                <div class="space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm">Tempo decorrido</span>
+                                        <span class="text-sm font-semibold text-blue-500">50%</span>
+                                    </div>
+                                    <div class="h-3 bg-zinc-800 rounded-full overflow-hidden">
+                                        <div class="h-full bg-blue-500 rounded-full" style="width: 50%"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Dates -->
+                            <div class="grid grid-cols-2 gap-4 pt-4 border-t border-zinc-800">
+                                <div>
+                                    <p class="text-xs text-zinc-500">Data de Início</p>
+                                    <p class="text-sm font-medium mt-1">01/07/2024</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-zinc-500">Data de Término</p>
+                                    <p class="text-sm font-medium mt-1">01/07/2025</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Portal do Cliente -->
+                <div id="tab-portal" class="tab-content hidden">
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg">
+                        <div class="p-6 border-b border-zinc-800">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-link text-blue-500"></i>
+                                <h3 class="text-lg font-semibold">Portal do Cliente</h3>
+                            </div>
+                        </div>
+                        <div class="p-6 space-y-6">
+                            <div class="p-4 bg-blue-500/5 border border-blue-500/20 rounded-lg">
+                                <p class="text-sm text-zinc-400">
+                                    O Portal do Cliente permite que seu cliente acesse uma área exclusiva para visualizar o planejamento de conteúdo, aprovar peças, acompanhar pagamentos e se comunicar diretamente com a equipe.
+                                </p>
+                            </div>
+
+                            <div class="p-4 bg-zinc-950/50 rounded-lg border border-zinc-800">
+                                <label class="text-xs text-zinc-500">Link de Acesso</label>
+                                <div class="flex items-center gap-2 mt-2">
+                                    <input type="text" value="https://senna.ia/portal/x5bJkPC9PGy1YKN7hYNNHT0OaKtBEAzMST1a98NXP2c" readonly class="flex-1 px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-md text-zinc-100 font-mono text-sm">
+                                    <button class="px-3 py-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-md transition-colors flex items-center gap-2">
+                                        <i class="fas fa-copy"></i>
+                                        Copiar
+                                    </button>
+                                    <button class="px-3 py-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-md transition-colors flex items-center gap-2">
+                                        <i class="fas fa-external-link-alt"></i>
+                                        Abrir
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-xs text-zinc-500">Criado em</p>
+                                    <p class="text-sm mt-1">05/03/2026, 15:44</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-zinc-500">Último acesso</p>
+                                    <p class="text-sm mt-1">05/03/2026, 15:46</p>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-3 pt-4 border-t border-zinc-800">
+                                <button class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-lg transition-colors flex items-center gap-2">
+                                    <i class="fas fa-sync-alt"></i>
+                                    Gerar Novo Link
+                                </button>
+                                <button class="px-4 py-2 bg-transparent hover:bg-red-500/10 border border-red-500/50 text-red-500 rounded-lg transition-colors flex items-center gap-2">
+                                    <i class="fas fa-trash"></i>
+                                    Revogar Acesso
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Documentos -->
+                <div id="tab-documents" class="tab-content hidden">
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg">
+                        <div class="p-6 border-b border-zinc-800 flex items-center justify-between">
+                            <h3 class="text-lg font-semibold">Documentos</h3>
+                            <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
+                                Adicionar Documento
+                            </button>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-4 bg-zinc-950/50 rounded-lg border border-zinc-800">
+                                    <div class="flex items-center gap-3">
+                                        <i class="fas fa-file-pdf text-red-500"></i>
+                                        <div>
+                                            <p class="font-medium">Contrato de Prestação de Serviços</p>
+                                            <p class="text-sm text-zinc-500">Contrato</p>
+                                        </div>
+                                    </div>
+                                    <button class="px-3 py-1 text-sm text-zinc-400 hover:text-white transition-colors">Visualizar</button>
+                                </div>
+                                <div class="flex items-center justify-between p-4 bg-zinc-950/50 rounded-lg border border-zinc-800">
+                                    <div class="flex items-center gap-3">
+                                        <i class="fas fa-file-alt text-blue-500"></i>
+                                        <div>
+                                            <p class="font-medium">Briefing Institucional</p>
+                                            <p class="text-sm text-zinc-500">Briefing</p>
+                                        </div>
+                                    </div>
+                                    <button class="px-3 py-1 text-sm text-zinc-400 hover:text-white transition-colors">Visualizar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Dados Financeiros -->
+                <div id="tab-finance" class="tab-content hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-zinc-500">Valor Mensal</p>
+                                    <p class="text-2xl font-bold text-emerald-500 mt-1">R$ 8.500,00</p>
+                                </div>
+                                <i class="fas fa-dollar-sign text-emerald-500 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-zinc-500">Dia de Vencimento</p>
+                                    <p class="text-2xl font-bold text-cyan-500 mt-1">Todo dia 10</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-zinc-500">Margem (MF)</p>
+                                    <p class="text-2xl font-bold text-violet-500 mt-1">35%</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg">
+                        <div class="p-6 border-b border-zinc-800">
+                            <h3 class="text-lg font-semibold">Histórico de Pagamentos</h3>
+                        </div>
+                        <div class="p-6">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b border-zinc-800">
+                                        <th class="text-left py-3 px-4 text-sm font-medium text-zinc-500">Mês</th>
+                                        <th class="text-left py-3 px-4 text-sm font-medium text-zinc-500">Valor</th>
+                                        <th class="text-left py-3 px-4 text-sm font-medium text-zinc-500">Status</th>
+                                        <th class="text-left py-3 px-4 text-sm font-medium text-zinc-500">Data Pag.</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-zinc-800">
+                                        <td class="py-3 px-4">Janeiro 2025</td>
+                                        <td class="py-3 px-4 font-semibold">R$ 8.500,00</td>
+                                        <td class="py-3 px-4">
+                                            <span class="text-xs px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">Pago</span>
+                                        </td>
+                                        <td class="py-3 px-4 text-zinc-400">10/01/2025</td>
+                                    </tr>
+                                    <tr class="border-b border-zinc-800">
+                                        <td class="py-3 px-4">Dezembro 2024</td>
+                                        <td class="py-3 px-4 font-semibold">R$ 8.500,00</td>
+                                        <td class="py-3 px-4">
+                                            <span class="text-xs px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">Pago</span>
+                                        </td>
+                                        <td class="py-3 px-4 text-zinc-400">10/12/2024</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Integrações -->
+                <div id="tab-integrations" class="tab-content hidden">
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg">
+                        <div class="p-6 border-b border-zinc-800">
+                            <h3 class="text-lg font-semibold">Integrações de Mídia Paga</h3>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <div class="flex items-center justify-between p-4 bg-zinc-950/50 rounded-lg border border-zinc-800">
+                                <div class="flex items-center gap-3">
+                                    <i class="fab fa-google text-cyan-500 text-xl"></i>
+                                    <div>
+                                        <p class="font-medium">Google Ads</p>
+                                        <p class="text-sm text-zinc-500">Conectar conta de anúncios</p>
+                                    </div>
+                                </div>
+                                <button class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-lg transition-colors">Conectar</button>
+                            </div>
+                            <div class="flex items-center justify-between p-4 bg-zinc-950/50 rounded-lg border border-zinc-800">
+                                <div class="flex items-center gap-3">
+                                    <i class="fab fa-facebook text-violet-500 text-xl"></i>
+                                    <div>
+                                        <p class="font-medium">Meta Ads</p>
+                                        <p class="text-sm text-zinc-500">Facebook e Instagram Ads</p>
+                                    </div>
+                                </div>
+                                <button class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-lg transition-colors">Conectar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById('tab-' + tabName).classList.remove('hidden');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

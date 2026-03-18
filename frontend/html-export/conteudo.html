@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>senna.ia - Grade de Conteúdo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        zinc: { 400: '#a1a1aa', 500: '#71717a', 600: '#52525b', 700: '#3f3f46', 800: '#27272a', 900: '#18181b', 950: '#09090b' },
+                        blue: { 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
+                        cyan: { 500: '#06b6d4', 600: '#0891b2' },
+                        emerald: { 500: '#10b981', 600: '#059669' },
+                        orange: { 500: '#f97316' },
+                        violet: { 500: '#8b5cf6', 600: '#7c3aed' },
+                        rose: { 500: '#f43f5e' },
+                        amber: { 500: '#f59e0b' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .sidebar-link.active { background-color: #2563eb; color: white; }
+        .sidebar-link:hover:not(.active) { background-color: #27272a; color: white; }
+        .kanban-column { min-height: 400px; }
+    </style>
+</head>
+<body class="min-h-screen bg-zinc-950 text-zinc-100">
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="fixed left-0 top-0 h-full w-64 bg-zinc-950/95 border-r border-zinc-800 z-50">
+            <div class="flex flex-col h-full">
+                <div class="p-6 border-b border-zinc-800">
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">senna.ia</h1>
+                    <p class="text-xs text-zinc-500 mt-1">Agência de Marketing</p>
+                </div>
+                <nav class="flex-1 p-4 space-y-2">
+                    <a href="dashboard.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-chart-line w-5"></i><span class="font-medium">Dashboard</span>
+                    </a>
+                    <a href="clientes.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-briefcase w-5"></i><span class="font-medium">Clientes</span>
+                    </a>
+                    <a href="conteudo.html" class="sidebar-link active flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-file-alt w-5"></i><span class="font-medium">Conteúdo</span>
+                    </a>
+                    <a href="financeiro.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-chart-bar w-5"></i><span class="font-medium">Financeiro</span>
+                    </a>
+                    <a href="leads.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-user-plus w-5"></i><span class="font-medium">CRM Leads</span>
+                    </a>
+                    <a href="colaboradores.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-users w-5"></i><span class="font-medium">Colaboradores</span>
+                    </a>
+                    <a href="metas.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-bullseye w-5"></i><span class="font-medium">Metas</span>
+                    </a>
+                    <a href="midia-paga.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-ad w-5"></i><span class="font-medium">Mídia Paga</span>
+                    </a>
+                    <a href="insights.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-lightbulb w-5"></i><span class="font-medium">Insights</span>
+                    </a>
+                    <a href="documentos.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-folder-open w-5"></i><span class="font-medium">Docs Internos</span>
+                    </a>
+                </nav>
+                <div class="p-4 border-t border-zinc-800">
+                    <div class="mb-4 p-3 bg-zinc-900/50 rounded-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-cyan-600 flex items-center justify-center text-white font-bold">C</div>
+                            <div class="flex-1 overflow-hidden">
+                                <p class="text-sm font-semibold text-white truncate">Carolina Silva</p>
+                                <p class="text-xs text-zinc-500 truncate">Admin</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="index.html" class="w-full flex items-center gap-3 px-4 py-3 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors">
+                        <i class="fas fa-sign-out-alt w-5"></i><span>Sair</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="ml-64 flex-1 p-8">
+            <div class="space-y-6">
+                <!-- Header -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-4xl font-bold tracking-tight">Grade de Conteúdo</h1>
+                        <p class="text-zinc-400 mt-2">Gerencie a produção de conteúdo dos seus clientes</p>
+                    </div>
+                    <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center gap-2">
+                        <i class="fas fa-plus"></i>
+                        Novo Card
+                    </button>
+                </div>
+
+                <!-- Filtros -->
+                <div class="flex items-center gap-4 flex-wrap">
+                    <select class="px-4 py-2 bg-zinc-900/50 border border-zinc-800 rounded-lg text-zinc-300">
+                        <option>Todos os clientes</option>
+                        <option>TechStart Solutions</option>
+                        <option>Café Premium</option>
+                        <option>ModaStyle</option>
+                    </select>
+                    <select class="px-4 py-2 bg-zinc-900/50 border border-zinc-800 rounded-lg text-zinc-300">
+                        <option>Janeiro 2025</option>
+                        <option>Fevereiro 2025</option>
+                        <option>Março 2025</option>
+                    </select>
+                    <select class="px-4 py-2 bg-zinc-900/50 border border-zinc-800 rounded-lg text-zinc-300">
+                        <option>Todos os tipos</option>
+                        <option>Post Feed</option>
+                        <option>Reels</option>
+                        <option>Stories</option>
+                    </select>
+                </div>
+
+                <!-- Kanban Board -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4 overflow-x-auto">
+                    <!-- Coluna: Briefing -->
+                    <div class="kanban-column bg-zinc-900/30 rounded-lg p-4 min-w-[280px]">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-zinc-500"></div>
+                                <h3 class="font-semibold text-zinc-300">Briefing</h3>
+                                <span class="text-xs text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded-full">2</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <!-- Card -->
+                            <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-4 cursor-pointer hover:border-zinc-700 transition-colors">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-xs px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400">Stories</span>
+                                </div>
+                                <h4 class="font-medium text-white mb-2">Stories de promoção TechStart</h4>
+                                <p class="text-xs text-zinc-500 mb-3">Série de 3 stories anunciando promoção de lançamento</p>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2 text-xs text-zinc-500">
+                                        <i class="fas fa-calendar"></i>
+                                        <span>22/01</span>
+                                    </div>
+                                    <div class="w-6 h-6 rounded-full bg-gradient-to-br from-cyan-600 to-blue-600 flex items-center justify-center text-white text-xs">M</div>
+                                </div>
+                                <div class="flex gap-1 mt-3">
+                                    <span class="text-xs px-2 py-0.5 rounded bg-orange-500/20 text-orange-400">PROMOÇÃO</span>
+                                </div>
+                            </div>
+                            <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-4 cursor-pointer hover:border-zinc-700 transition-colors">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-xs px-2 py-0.5 rounded bg-violet-500/20 text-violet-400">Post Feed</span>
+                                </div>
+                                <h4 class="font-medium text-white mb-2">Post mulheres</h4>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2 text-xs text-zinc-500">
+                                        <i class="fas fa-calendar"></i>
+                                        <span>-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Coluna: Em Produção -->
+                    <div class="kanban-column bg-zinc-900/30 rounded-lg p-4 min-w-[280px]">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-violet-500"></div>
+                                <h3 class="font-semibold text-zinc-300">Em Produção</h3>
+                                <span class="text-xs text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded-full">1</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-4 cursor-pointer hover:border-zinc-700 transition-colors">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-xs px-2 py-0.5 rounded bg-violet-500/20 text-violet-400">Post Feed</span>
+                                </div>
+                                <h4 class="font-medium text-white mb-2">Post sobre novo produto TechStart</h4>
+                                <p class="text-xs text-zinc-500 mb-3">Post anunciando o lançamento do novo produto TechStart Pro</p>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2 text-xs text-zinc-500">
+                                        <i class="fas fa-calendar"></i>
+                                        <span>20/01</span>
+                                    </div>
+                                    <div class="w-6 h-6 rounded-full bg-gradient-to-br from-violet-600 to-pink-600 flex items-center justify-center text-white text-xs">R</div>
+                                </div>
+                                <div class="flex gap-1 mt-3">
+                                    <span class="text-xs px-2 py-0.5 rounded bg-violet-500/20 text-violet-400">LANÇAMENTO</span>
+                                    <span class="text-xs px-2 py-0.5 rounded bg-orange-500/20 text-orange-400">URGENTE</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Coluna: Revisão -->
+                    <div class="kanban-column bg-zinc-900/30 rounded-lg p-4 min-w-[280px]">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                                <h3 class="font-semibold text-zinc-300">Revisão</h3>
+                                <span class="text-xs text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded-full">0</span>
+                            </div>
+                        </div>
+                        <div class="text-center py-8 text-zinc-600">
+                            <i class="fas fa-inbox text-2xl mb-2"></i>
+                            <p class="text-sm">Nenhum card</p>
+                        </div>
+                    </div>
+
+                    <!-- Coluna: Aguardando Aprovação -->
+                    <div class="kanban-column bg-zinc-900/30 rounded-lg p-4 min-w-[280px]">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-orange-500"></div>
+                                <h3 class="font-semibold text-zinc-300">Aguardando Aprovação</h3>
+                                <span class="text-xs text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded-full">1</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-4 cursor-pointer hover:border-zinc-700 transition-colors">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-xs px-2 py-0.5 rounded bg-rose-500/20 text-rose-400">Reels</span>
+                                </div>
+                                <h4 class="font-medium text-white mb-2">Reels dicas de café</h4>
+                                <p class="text-xs text-zinc-500 mb-3">5 dicas para preparar o café perfeito em casa</p>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2 text-xs text-zinc-500">
+                                        <i class="fas fa-calendar"></i>
+                                        <span>19/01</span>
+                                    </div>
+                                    <div class="w-6 h-6 rounded-full bg-gradient-to-br from-orange-600 to-red-600 flex items-center justify-center text-white text-xs">L</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Coluna: Aprovado -->
+                    <div class="kanban-column bg-zinc-900/30 rounded-lg p-4 min-w-[280px]">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                                <h3 class="font-semibold text-zinc-300">Aprovado</h3>
+                                <span class="text-xs text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded-full">1</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-4 cursor-pointer hover:border-zinc-700 transition-colors">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-xs px-2 py-0.5 rounded bg-violet-500/20 text-violet-400">Post Feed</span>
+                                </div>
+                                <h4 class="font-medium text-white mb-2">Post institucional ModaStyle</h4>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2 text-xs text-zinc-500">
+                                        <i class="fas fa-calendar"></i>
+                                        <span>18/01</span>
+                                    </div>
+                                    <div class="w-6 h-6 rounded-full bg-gradient-to-br from-pink-600 to-rose-600 flex items-center justify-center text-white text-xs">M</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Coluna: Publicado -->
+                    <div class="kanban-column bg-zinc-900/30 rounded-lg p-4 min-w-[280px]">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                                <h3 class="font-semibold text-zinc-300">Publicado</h3>
+                                <span class="text-xs text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded-full">2</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-4 cursor-pointer hover:border-zinc-700 transition-colors opacity-75">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-xs px-2 py-0.5 rounded bg-violet-500/20 text-violet-400">Post Feed</span>
+                                    <i class="fas fa-check-circle text-emerald-500 text-xs"></i>
+                                </div>
+                                <h4 class="font-medium text-white mb-2">Post de ano novo</h4>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2 text-xs text-zinc-500">
+                                        <i class="fas fa-calendar"></i>
+                                        <span>01/01</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-4 cursor-pointer hover:border-zinc-700 transition-colors opacity-75">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-xs px-2 py-0.5 rounded bg-rose-500/20 text-rose-400">Reels</span>
+                                    <i class="fas fa-check-circle text-emerald-500 text-xs"></i>
+                                </div>
+                                <h4 class="font-medium text-white mb-2">Reels retrospectiva 2024</h4>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2 text-xs text-zinc-500">
+                                        <i class="fas fa-calendar"></i>
+                                        <span>31/12</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard de Entregas -->
+                <div class="mt-8">
+                    <h2 class="text-2xl font-bold mb-4">Dashboard de Entregas Mensais</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- TechStart -->
+                        <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-semibold">TechStart Solutions</h3>
+                                <span class="text-xs px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">Em dia</span>
+                            </div>
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-zinc-400">Posts</span>
+                                        <span>4/8</span>
+                                    </div>
+                                    <div class="h-2 bg-zinc-800 rounded-full overflow-hidden">
+                                        <div class="h-full bg-violet-500 rounded-full" style="width: 50%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-zinc-400">Reels</span>
+                                        <span>2/4</span>
+                                    </div>
+                                    <div class="h-2 bg-zinc-800 rounded-full overflow-hidden">
+                                        <div class="h-full bg-rose-500 rounded-full" style="width: 50%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-zinc-400">Stories</span>
+                                        <span>8/12</span>
+                                    </div>
+                                    <div class="h-2 bg-zinc-800 rounded-full overflow-hidden">
+                                        <div class="h-full bg-cyan-500 rounded-full" style="width: 66%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-zinc-800 flex justify-between items-center">
+                                <span class="text-sm text-zinc-500">Deadline: 31/01</span>
+                                <span class="text-lg font-bold text-emerald-500">58%</span>
+                            </div>
+                        </div>
+
+                        <!-- Café Premium -->
+                        <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-semibold">Café Premium</h3>
+                                <span class="text-xs px-2 py-1 rounded-full bg-orange-500/10 text-orange-500 border border-orange-500/20">Atenção</span>
+                            </div>
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-zinc-400">Posts</span>
+                                        <span>2/6</span>
+                                    </div>
+                                    <div class="h-2 bg-zinc-800 rounded-full overflow-hidden">
+                                        <div class="h-full bg-violet-500 rounded-full" style="width: 33%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-zinc-400">Reels</span>
+                                        <span>1/4</span>
+                                    </div>
+                                    <div class="h-2 bg-zinc-800 rounded-full overflow-hidden">
+                                        <div class="h-full bg-rose-500 rounded-full" style="width: 25%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-zinc-400">Stories</span>
+                                        <span>4/8</span>
+                                    </div>
+                                    <div class="h-2 bg-zinc-800 rounded-full overflow-hidden">
+                                        <div class="h-full bg-cyan-500 rounded-full" style="width: 50%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-zinc-800 flex justify-between items-center">
+                                <span class="text-sm text-zinc-500">Deadline: 31/01</span>
+                                <span class="text-lg font-bold text-orange-500">39%</span>
+                            </div>
+                        </div>
+
+                        <!-- ModaStyle -->
+                        <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-semibold">ModaStyle</h3>
+                                <span class="text-xs px-2 py-1 rounded-full bg-red-500/10 text-red-500 border border-red-500/20">Atrasado</span>
+                            </div>
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-zinc-400">Posts</span>
+                                        <span>1/8</span>
+                                    </div>
+                                    <div class="h-2 bg-zinc-800 rounded-full overflow-hidden">
+                                        <div class="h-full bg-violet-500 rounded-full" style="width: 12%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-zinc-400">Reels</span>
+                                        <span>0/4</span>
+                                    </div>
+                                    <div class="h-2 bg-zinc-800 rounded-full overflow-hidden">
+                                        <div class="h-full bg-rose-500 rounded-full" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-zinc-400">Stories</span>
+                                        <span>2/10</span>
+                                    </div>
+                                    <div class="h-2 bg-zinc-800 rounded-full overflow-hidden">
+                                        <div class="h-full bg-cyan-500 rounded-full" style="width: 20%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-zinc-800 flex justify-between items-center">
+                                <span class="text-sm text-red-500">Deadline: 15/01 (vencido)</span>
+                                <span class="text-lg font-bold text-red-500">14%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

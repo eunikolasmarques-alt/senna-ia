@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
-import { ArrowLeft, Building2, Mail, Phone, Globe, MapPin, FileText, DollarSign, BarChart, Calendar, Clock, TrendingUp, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Building2, Mail, Phone, Globe, MapPin, FileText, DollarSign, BarChart, Calendar, Clock, TrendingUp, AlertCircle, Link2, Copy, RefreshCw, ExternalLink, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Progress } from '../components/ui/progress';
 
@@ -20,9 +20,11 @@ const ClientDetail = () => {
   const [payments, setPayments] = useState([]);
   const [documents, setDocuments] = useState([]);
   const [contractInfo, setContractInfo] = useState(null);
+  const [accessToken, setAccessToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [editedClient, setEditedClient] = useState({});
+  const [generatingToken, setGeneratingToken] = useState(false);
 
   useEffect(() => {
     fetchClientData();
@@ -46,6 +48,14 @@ const ClientDetail = () => {
         setContractInfo(contractRes.data);
       } catch (error) {
         console.log('No contract info available');
+      }
+      
+      // Buscar token de acesso do portal
+      try {
+        const tokenRes = await axios.get(`${API_URL}/clients/${clientId}/access-token`);
+        setAccessToken(tokenRes.data);
+      } catch (error) {
+        console.log('No access token available');
       }
     } catch (error) {
       console.error('Failed to fetch client data:', error);
@@ -74,6 +84,45 @@ const ClientDetail = () => {
       'Em atraso': 'bg-rose-500/10 text-rose-500 border-rose-500/20',
     };
     return colors[status] || colors['Pendente'];
+  };
+
+  const generateAccessToken = async () => {
+    setGeneratingToken(true);
+    try {
+      const response = await axios.post(`${API_URL}/clients/${clientId}/generate-access-token`);
+      setAccessToken({
+        has_token: true,
+        token: response.data.token,
+        access_url: response.data.access_url,
+        client_name: response.data.client_name,
+        created_at: response.data.created_at
+      });
+      toast.success('Link de acesso gerado com sucesso!');
+    } catch (error) {
+      console.error('Failed to generate access token:', error);
+      toast.error('Erro ao gerar link de acesso');
+    } finally {
+      setGeneratingToken(false);
+    }
+  };
+
+  const revokeAccessToken = async () => {
+    try {
+      await axios.delete(`${API_URL}/clients/${clientId}/access-token`);
+      setAccessToken({ has_token: false });
+      toast.success('Acesso revogado com sucesso!');
+    } catch (error) {
+      console.error('Failed to revoke access token:', error);
+      toast.error('Erro ao revogar acesso');
+    }
+  };
+
+  const copyAccessLink = () => {
+    if (accessToken?.token) {
+      const fullUrl = `${window.location.origin}/portal/${accessToken.token}`;
+      navigator.clipboard.writeText(fullUrl);
+      toast.success('Link copiado para a área de transferência!');
+    }
   };
 
   if (loading) {
@@ -134,6 +183,7 @@ const ClientDetail = () => {
           <TabsList className="bg-zinc-900/50 border border-zinc-800">
             <TabsTrigger value="general" data-testid="tab-general">Informações Gerais</TabsTrigger>
             <TabsTrigger value="contract" data-testid="tab-contract">Contrato</TabsTrigger>
+            <TabsTrigger value="portal" data-testid="tab-portal">Portal do Cliente</TabsTrigger>
             <TabsTrigger value="documents" data-testid="tab-documents">Contratos e Documentos</TabsTrigger>
             <TabsTrigger value="finance" data-testid="tab-finance">Dados Financeiros</TabsTrigger>
             <TabsTrigger value="integrations" data-testid="tab-integrations">Integrações</TabsTrigger>
@@ -343,6 +393,127 @@ const ClientDetail = () => {
                     <Calendar className="mx-auto text-zinc-600 mb-4" size={48} />
                     <p className="text-zinc-500 mb-4">Nenhum contrato cadastrado</p>
                     <p className="text-sm text-zinc-600">Adicione as informações de contrato nas Informações Gerais do cliente.</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="portal" className="mt-6">
+            <Card className="bg-zinc-900/50 border-zinc-800">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Link2 className="text-blue-500" size={24} />
+                  Portal do Cliente
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="p-4 bg-blue-500/5 border border-blue-500/20 rounded-lg">
+                  <p className="text-sm text-zinc-400">
+                    O Portal do Cliente permite que seu cliente acesse uma área exclusiva para visualizar o planejamento de conteúdo, 
+                    aprovar peças, acompanhar pagamentos e se comunicar diretamente com a equipe.
+                  </p>
+                </div>
+
+                {accessToken?.has_token ? (
+                  <div className="space-y-4">
+                    <div className="p-4 bg-zinc-950/50 rounded-lg border border-zinc-800">
+                      <Label className="text-xs text-zinc-500">Link de Acesso</Label>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Input 
+                          value={`${window.location.origin}/portal/${accessToken.token}`}
+                          readOnly
+                          className="flex-1 font-mono text-sm"
+                        />
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={copyAccessLink}
+                          data-testid="copy-portal-link"
+                        >
+                          <Copy size={16} className="mr-1" />
+                          Copiar
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => window.open(`/portal/${accessToken.token}`, '_blank')}
+                          data-testid="open-portal-link"
+                        >
+                          <ExternalLink size={16} className="mr-1" />
+                          Abrir
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-xs text-zinc-500">Criado em</Label>
+                        <p className="text-sm mt-1">
+                          {accessToken.created_at 
+                            ? new Date(accessToken.created_at).toLocaleDateString('pt-BR', { 
+                                day: '2-digit', month: '2-digit', year: 'numeric', 
+                                hour: '2-digit', minute: '2-digit' 
+                              })
+                            : '-'}
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-xs text-zinc-500">Último acesso</Label>
+                        <p className="text-sm mt-1">
+                          {accessToken.last_used_at 
+                            ? new Date(accessToken.last_used_at).toLocaleDateString('pt-BR', { 
+                                day: '2-digit', month: '2-digit', year: 'numeric', 
+                                hour: '2-digit', minute: '2-digit' 
+                              })
+                            : 'Nunca acessado'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3 pt-4 border-t border-zinc-800">
+                      <Button 
+                        variant="outline"
+                        onClick={generateAccessToken}
+                        disabled={generatingToken}
+                        data-testid="regenerate-token-btn"
+                      >
+                        <RefreshCw size={16} className={`mr-2 ${generatingToken ? 'animate-spin' : ''}`} />
+                        Gerar Novo Link
+                      </Button>
+                      <Button 
+                        variant="outline"
+                        className="border-red-500/50 text-red-500 hover:bg-red-500/10"
+                        onClick={revokeAccessToken}
+                        data-testid="revoke-token-btn"
+                      >
+                        <Trash2 size={16} className="mr-2" />
+                        Revogar Acesso
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <Link2 className="mx-auto text-zinc-600 mb-4" size={48} />
+                    <p className="text-zinc-400 mb-4">Nenhum link de acesso gerado para este cliente</p>
+                    <Button 
+                      className="bg-blue-600 hover:bg-blue-700"
+                      onClick={generateAccessToken}
+                      disabled={generatingToken}
+                      data-testid="generate-token-btn"
+                    >
+                      {generatingToken ? (
+                        <>
+                          <RefreshCw size={16} className="mr-2 animate-spin" />
+                          Gerando...
+                        </>
+                      ) : (
+                        <>
+                          <Link2 size={16} className="mr-2" />
+                          Gerar Link de Acesso
+                        </>
+                      )}
+                    </Button>
                   </div>
                 )}
               </CardContent>

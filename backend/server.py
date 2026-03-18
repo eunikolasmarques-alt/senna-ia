@@ -282,6 +282,38 @@ class Service(ServiceBase):
     id: str
     created_at: str
 
+# ============= CLIENT PORTAL MODELS =============
+
+class ClientAccessToken(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str
+    client_id: str
+    token: str
+    is_active: bool = True
+    created_at: str
+    expires_at: Optional[str] = None
+    last_used_at: Optional[str] = None
+
+class ClientPortalMessage(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str
+    client_id: str
+    content_card_id: Optional[str] = None
+    sender_type: str  # "client" or "agency"
+    sender_id: str
+    sender_name: str
+    message: str
+    created_at: str
+    read_at: Optional[str] = None
+
+class ClientPortalMessageCreate(BaseModel):
+    content_card_id: Optional[str] = None
+    message: str
+
+class ContentApprovalRequest(BaseModel):
+    action: str  # "approve" or "reject"
+    feedback: Optional[str] = None
+
 # ============= AUTH HELPERS =============
 
 def hash_password(password: str) -> str:
@@ -301,12 +333,36 @@ def decode_token(token: str) -> str:
     except:
         raise HTTPException(status_code=401, detail="Invalid token")
 
+def create_client_access_token(client_id: str) -> str:
+    """Generate a unique access token for client portal"""
+    import secrets
+    return secrets.token_urlsafe(32)
+
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> Dict:
     user_id = decode_token(credentials.credentials)
     user = await db.users.find_one({"id": user_id}, {"_id": 0})
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
     return user
+
+async def get_current_client(credentials: HTTPAuthorizationCredentials = Depends(security)) -> Dict:
+    """Authenticate client via access token"""
+    token = credentials.credentials
+    access_token = await db.client_access_tokens.find_one({"token": token, "is_active": True}, {"_id": 0})
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Invalid or expired access token")
+    
+    # Update last used timestamp
+    await db.client_access_tokens.update_one(
+        {"token": token},
+        {"$set": {"last_used_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    client = await db.clients.find_one({"id": access_token['client_id']}, {"_id": 0})
+    if not client:
+        raise HTTPException(status_code=401, detail="Client not found")
+    
+    return {"client": client, "token_info": access_token}
 
 # ============= AUTH ROUTES =============
 
@@ -1063,6 +1119,382 @@ async def delete_service(service_id: str, current_user: Dict = Depends(get_curre
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Service not found")
     return {"message": "Service deleted successfully"}
+
+# ============= CLIENT PORTAL - ACCESS TOKEN MANAGEMENT =============
+
+@api_router.post("/clients/{client_id}/generate-access-token")
+async def generate_client_access_token(client_id: str, current_user: Dict = Depends(get_current_user)):
+    """Generate a magic link token for client portal access"""
+    client = await db.clients.find_one({"id": client_id}, {"_id": 0})
+    if not client:
+        raise HTTPException(status_code=404, detail="Client not found")
+    
+    # Deactivate any existing tokens for this client
+    await db.client_access_tokens.update_many(
+        {"client_id": client_id},
+        {"$set": {"is_active": False}}
+    )
+    
+    # Generate new token
+    token = create_client_access_token(client_id)
+    token_doc = {
+        "id": str(uuid.uuid4()),
+        "client_id": client_id,
+        "token": token,
+        "is_active": True,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "expires_at": None,  # No expiration for now
+        "last_used_at": None
+    }
+    
+    await db.client_access_tokens.insert_one(token_doc)
+    
+    return {
+        "token": token,
+        "access_url": f"/portal/{token}",
+        "client_name": client['name'],
+        "created_at": token_doc['created_at']
+    }
+
+@api_router.get("/clients/{client_id}/access-token")
+async def get_client_access_token(client_id: str, current_user: Dict = Depends(get_current_user)):
+    """Get the current active access token for a client"""
+    token = await db.client_access_tokens.find_one(
+        {"client_id": client_id, "is_active": True},
+        {"_id": 0}
+    )
+    if not token:
+        return {"has_token": False}
+    
+    client = await db.clients.find_one({"id": client_id}, {"_id": 0})
+    
+    return {
+        "has_token": True,
+        "token": token['token'],
+        "access_url": f"/portal/{token['token']}",
+        "client_name": client['name'] if client else "Unknown",
+        "created_at": token['created_at'],
+        "last_used_at": token.get('last_used_at')
+    }
+
+@api_router.delete("/clients/{client_id}/access-token")
+async def revoke_client_access_token(client_id: str, current_user: Dict = Depends(get_current_user)):
+    """Revoke all access tokens for a client"""
+    result = await db.client_access_tokens.update_many(
+        {"client_id": client_id},
+        {"$set": {"is_active": False}}
+    )
+    return {"message": f"Revoked {result.modified_count} token(s)"}
+
+# ============= CLIENT PORTAL - CLIENT AUTHENTICATION =============
+
+@api_router.get("/portal/validate/{token}")
+async def validate_portal_token(token: str):
+    """Validate a client portal access token"""
+    access_token = await db.client_access_tokens.find_one(
+        {"token": token, "is_active": True},
+        {"_id": 0}
+    )
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Invalid or expired access token")
+    
+    client = await db.clients.find_one({"id": access_token['client_id']}, {"_id": 0})
+    if not client:
+        raise HTTPException(status_code=404, detail="Client not found")
+    
+    return {
+        "valid": True,
+        "client": {
+            "id": client['id'],
+            "name": client['name'],
+            "logo": client.get('logo'),
+            "segment": client.get('segment')
+        },
+        "token": token
+    }
+
+# ============= CLIENT PORTAL - CLIENT DASHBOARD =============
+
+@api_router.get("/portal/dashboard")
+async def get_portal_dashboard(client_data: Dict = Depends(get_current_client)):
+    """Get client portal dashboard data"""
+    client = client_data['client']
+    client_id = client['id']
+    
+    # Get content cards for this client
+    content = await db.content_cards.find(
+        {"client_id": client_id},
+        {"_id": 0}
+    ).to_list(None)
+    
+    # Get payments for this client
+    payments = await db.payments.find(
+        {"client_id": client_id},
+        {"_id": 0}
+    ).to_list(None)
+    
+    # Calculate stats
+    pending_approval = len([c for c in content if c['status'] == "Aguardando Aprovação"])
+    approved_content = len([c for c in content if c['status'] in ["Aprovado", "Agendado", "Publicado"]])
+    total_content = len(content)
+    
+    paid_amount = sum(p['amount'] for p in payments if p['status'] == "Pago")
+    pending_amount = sum(p['amount'] for p in payments if p['status'] in ["Pendente", "Em atraso"])
+    
+    # Get unread messages count
+    unread_messages = await db.portal_messages.count_documents({
+        "client_id": client_id,
+        "sender_type": "agency",
+        "read_at": None
+    })
+    
+    return {
+        "client": {
+            "id": client['id'],
+            "name": client['name'],
+            "logo": client.get('logo'),
+            "segment": client.get('segment'),
+            "monthly_value": client.get('monthly_value', 0)
+        },
+        "stats": {
+            "pending_approval": pending_approval,
+            "approved_content": approved_content,
+            "total_content": total_content,
+            "paid_amount": paid_amount,
+            "pending_amount": pending_amount,
+            "unread_messages": unread_messages
+        }
+    }
+
+@api_router.get("/portal/content")
+async def get_portal_content(client_data: Dict = Depends(get_current_client)):
+    """Get content cards for client portal"""
+    client = client_data['client']
+    
+    content = await db.content_cards.find(
+        {"client_id": client['id']},
+        {"_id": 0}
+    ).to_list(None)
+    
+    # Get users for assignee names
+    users = await db.users.find({}, {"_id": 0, "password": 0}).to_list(None)
+    user_map = {u['id']: u for u in users}
+    
+    # Enrich content with assignee names
+    for c in content:
+        if c.get('assignee_id') and c['assignee_id'] in user_map:
+            c['assignee_name'] = user_map[c['assignee_id']]['name']
+        else:
+            c['assignee_name'] = None
+    
+    return content
+
+@api_router.get("/portal/content/{content_id}")
+async def get_portal_content_detail(content_id: str, client_data: Dict = Depends(get_current_client)):
+    """Get single content card for client portal"""
+    client = client_data['client']
+    
+    content = await db.content_cards.find_one(
+        {"id": content_id, "client_id": client['id']},
+        {"_id": 0}
+    )
+    if not content:
+        raise HTTPException(status_code=404, detail="Content not found")
+    
+    # Get assignee info
+    if content.get('assignee_id'):
+        user = await db.users.find_one({"id": content['assignee_id']}, {"_id": 0, "password": 0})
+        content['assignee_name'] = user['name'] if user else None
+    
+    return content
+
+@api_router.post("/portal/content/{content_id}/approve")
+async def approve_portal_content(content_id: str, approval: ContentApprovalRequest, client_data: Dict = Depends(get_current_client)):
+    """Approve or reject content from client portal"""
+    client = client_data['client']
+    
+    content = await db.content_cards.find_one(
+        {"id": content_id, "client_id": client['id']},
+        {"_id": 0}
+    )
+    if not content:
+        raise HTTPException(status_code=404, detail="Content not found")
+    
+    if approval.action == "approve":
+        new_status = "Aprovado"
+        approval_status = "Aprovado"
+    elif approval.action == "reject":
+        new_status = "Revisão"
+        approval_status = "Rejeitado"
+    else:
+        raise HTTPException(status_code=400, detail="Invalid action")
+    
+    update_data = {
+        "status": new_status,
+        "approval_status": approval_status,
+        "approval_notes": approval.feedback,
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.content_cards.update_one(
+        {"id": content_id},
+        {"$set": update_data}
+    )
+    
+    # Add activity
+    activity = {
+        "id": str(uuid.uuid4()),
+        "user_id": f"client_{client['id']}",
+        "user_name": client['name'],
+        "action": f"Conteúdo {approval_status.lower()} pelo cliente",
+        "details": approval.feedback or "",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.content_cards.update_one(
+        {"id": content_id},
+        {"$push": {"activities": activity}}
+    )
+    
+    return {
+        "message": f"Conteúdo {approval_status.lower()} com sucesso",
+        "new_status": new_status
+    }
+
+@api_router.get("/portal/payments")
+async def get_portal_payments(client_data: Dict = Depends(get_current_client)):
+    """Get payments for client portal"""
+    client = client_data['client']
+    
+    payments = await db.payments.find(
+        {"client_id": client['id']},
+        {"_id": 0}
+    ).to_list(None)
+    
+    return payments
+
+@api_router.get("/portal/contract")
+async def get_portal_contract(client_data: Dict = Depends(get_current_client)):
+    """Get contract info for client portal"""
+    client = client_data['client']
+    
+    if not client.get('contract_start_date'):
+        return {
+            "has_contract": False,
+            "message": "Contrato não cadastrado"
+        }
+    
+    from dateutil.relativedelta import relativedelta
+    
+    start_date = datetime.fromisoformat(client['contract_start_date'].replace('Z', '+00:00'))
+    if start_date.tzinfo is None:
+        start_date = start_date.replace(tzinfo=timezone.utc)
+    
+    now = datetime.now(timezone.utc)
+    duration_months = client.get('contract_duration_months', 12)
+    
+    end_date = start_date + relativedelta(months=duration_months)
+    months_elapsed = (now.year - start_date.year) * 12 + (now.month - start_date.month)
+    months_remaining = duration_months - months_elapsed
+    days_remaining = (end_date - now).days
+    progress_percentage = (months_elapsed / duration_months * 100) if duration_months > 0 else 0
+    
+    return {
+        "has_contract": True,
+        "contract_start": start_date.isoformat(),
+        "contract_end": end_date.isoformat(),
+        "duration_months": duration_months,
+        "months_elapsed": max(0, months_elapsed),
+        "months_remaining": max(0, months_remaining),
+        "days_remaining": max(0, days_remaining),
+        "progress_percentage": min(100, max(0, progress_percentage)),
+        "is_expired": now > end_date,
+        "monthly_value": client.get('monthly_value', 0)
+    }
+
+# ============= CLIENT PORTAL - MESSAGING =============
+
+@api_router.get("/portal/messages")
+async def get_portal_messages(content_card_id: Optional[str] = None, client_data: Dict = Depends(get_current_client)):
+    """Get messages for client portal"""
+    client = client_data['client']
+    
+    query = {"client_id": client['id']}
+    if content_card_id:
+        query["content_card_id"] = content_card_id
+    
+    messages = await db.portal_messages.find(query, {"_id": 0}).sort("created_at", 1).to_list(None)
+    
+    return messages
+
+@api_router.post("/portal/messages")
+async def create_portal_message(message_data: ClientPortalMessageCreate, client_data: Dict = Depends(get_current_client)):
+    """Create a message from client portal"""
+    client = client_data['client']
+    
+    message = {
+        "id": str(uuid.uuid4()),
+        "client_id": client['id'],
+        "content_card_id": message_data.content_card_id,
+        "sender_type": "client",
+        "sender_id": client['id'],
+        "sender_name": client['name'],
+        "message": message_data.message,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "read_at": None
+    }
+    
+    await db.portal_messages.insert_one(message)
+    
+    # Return without _id
+    message.pop('_id', None)
+    return message
+
+@api_router.post("/portal/messages/{message_id}/read")
+async def mark_message_read(message_id: str, client_data: Dict = Depends(get_current_client)):
+    """Mark a message as read"""
+    client = client_data['client']
+    
+    result = await db.portal_messages.update_one(
+        {"id": message_id, "client_id": client['id'], "sender_type": "agency"},
+        {"$set": {"read_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {"success": result.modified_count > 0}
+
+# ============= AGENCY SIDE - PORTAL MESSAGES =============
+
+@api_router.get("/clients/{client_id}/portal-messages")
+async def get_client_portal_messages(client_id: str, content_card_id: Optional[str] = None, current_user: Dict = Depends(get_current_user)):
+    """Get portal messages for a client (agency side)"""
+    query = {"client_id": client_id}
+    if content_card_id:
+        query["content_card_id"] = content_card_id
+    
+    messages = await db.portal_messages.find(query, {"_id": 0}).sort("created_at", 1).to_list(None)
+    
+    return messages
+
+@api_router.post("/clients/{client_id}/portal-messages")
+async def create_agency_message(client_id: str, message_data: ClientPortalMessageCreate, current_user: Dict = Depends(get_current_user)):
+    """Create a message from agency to client"""
+    message = {
+        "id": str(uuid.uuid4()),
+        "client_id": client_id,
+        "content_card_id": message_data.content_card_id,
+        "sender_type": "agency",
+        "sender_id": current_user['id'],
+        "sender_name": current_user['name'],
+        "message": message_data.message,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "read_at": None
+    }
+    
+    await db.portal_messages.insert_one(message)
+    
+    # Return without _id
+    message.pop('_id', None)
+    return message
 
 app.include_router(api_router)
 

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>senna.ia - Clientes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        zinc: { 400: '#a1a1aa', 500: '#71717a', 600: '#52525b', 700: '#3f3f46', 800: '#27272a', 900: '#18181b', 950: '#09090b' },
+                        blue: { 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
+                        cyan: { 500: '#06b6d4', 600: '#0891b2' },
+                        emerald: { 500: '#10b981', 600: '#059669' },
+                        orange: { 500: '#f97316' },
+                        violet: { 500: '#8b5cf6', 600: '#7c3aed' },
+                        rose: { 500: '#f43f5e' },
+                        amber: { 500: '#f59e0b' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .sidebar-link.active { background-color: #2563eb; color: white; }
+        .sidebar-link:hover:not(.active) { background-color: #27272a; color: white; }
+    </style>
+</head>
+<body class="min-h-screen bg-zinc-950 text-zinc-100">
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="fixed left-0 top-0 h-full w-64 bg-zinc-950/95 border-r border-zinc-800 z-50">
+            <div class="flex flex-col h-full">
+                <!-- Logo -->
+                <div class="p-6 border-b border-zinc-800">
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                        senna.ia
+                    </h1>
+                    <p class="text-xs text-zinc-500 mt-1">Agência de Marketing</p>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="flex-1 p-4 space-y-2">
+                    <a href="dashboard.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-chart-line w-5"></i>
+                        <span class="font-medium">Dashboard</span>
+                    </a>
+                    <a href="clientes.html" class="sidebar-link active flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-briefcase w-5"></i>
+                        <span class="font-medium">Clientes</span>
+                    </a>
+                    <a href="conteudo.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-file-alt w-5"></i>
+                        <span class="font-medium">Conteúdo</span>
+                    </a>
+                    <a href="financeiro.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-chart-bar w-5"></i>
+                        <span class="font-medium">Financeiro</span>
+                    </a>
+                    <a href="leads.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-user-plus w-5"></i>
+                        <span class="font-medium">CRM Leads</span>
+                    </a>
+                    <a href="colaboradores.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-users w-5"></i>
+                        <span class="font-medium">Colaboradores</span>
+                    </a>
+                    <a href="metas.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-bullseye w-5"></i>
+                        <span class="font-medium">Metas</span>
+                    </a>
+                    <a href="midia-paga.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-ad w-5"></i>
+                        <span class="font-medium">Mídia Paga</span>
+                    </a>
+                    <a href="insights.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-lightbulb w-5"></i>
+                        <span class="font-medium">Insights</span>
+                    </a>
+                    <a href="documentos.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 transition-colors">
+                        <i class="fas fa-folder-open w-5"></i>
+                        <span class="font-medium">Docs Internos</span>
+                    </a>
+                </nav>
+
+                <!-- User Info -->
+                <div class="p-4 border-t border-zinc-800">
+                    <div class="mb-4 p-3 bg-zinc-900/50 rounded-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-cyan-600 flex items-center justify-center text-white font-bold">C</div>
+                            <div class="flex-1 overflow-hidden">
+                                <p class="text-sm font-semibold text-white truncate">Carolina Silva</p>
+                                <p class="text-xs text-zinc-500 truncate">Admin</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="index.html" class="w-full flex items-center gap-3 px-4 py-3 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors">
+                        <i class="fas fa-sign-out-alt w-5"></i>
+                        <span>Sair</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="ml-64 flex-1 p-8">
+            <div class="space-y-8">
+                <!-- Header -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-4xl font-bold tracking-tight">Clientes</h1>
+                        <p class="text-zinc-400 mt-2">Gerencie sua carteira de clientes</p>
+                    </div>
+                    <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center gap-2">
+                        <i class="fas fa-plus"></i>
+                        Novo Cliente
+                    </button>
+                </div>
+
+                <!-- Filtros -->
+                <div class="flex items-center gap-4">
+                    <div class="relative flex-1 max-w-md">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i>
+                        <input 
+                            type="text" 
+                            placeholder="Buscar cliente..."
+                            class="w-full pl-10 pr-4 py-2 bg-zinc-900/50 border border-zinc-800 rounded-lg text-zinc-100 placeholder-zinc-500 focus:border-blue-500 focus:outline-none"
+                        >
+                    </div>
+                    <select class="px-4 py-2 bg-zinc-900/50 border border-zinc-800 rounded-lg text-zinc-300">
+                        <option>Todos os status</option>
+                        <option>Ativo</option>
+                        <option>Pausado</option>
+                        <option>Cancelado</option>
+                    </select>
+                    <select class="px-4 py-2 bg-zinc-900/50 border border-zinc-800 rounded-lg text-zinc-300">
+                        <option>Todos os segmentos</option>
+                        <option>Tecnologia</option>
+                        <option>Alimentação</option>
+                        <option>Moda</option>
+                        <option>Serviços</option>
+                    </select>
+                </div>
+
+                <!-- Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4">
+                        <p class="text-sm text-zinc-500">Total de Clientes</p>
+                        <p class="text-2xl font-bold text-white mt-1">12</p>
+                    </div>
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4">
+                        <p class="text-sm text-zinc-500">Clientes Ativos</p>
+                        <p class="text-2xl font-bold text-emerald-500 mt-1">10</p>
+                    </div>
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4">
+                        <p class="text-sm text-zinc-500">Receita Mensal</p>
+                        <p class="text-2xl font-bold text-blue-500 mt-1">R$ 56.000</p>
+                    </div>
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4">
+                        <p class="text-sm text-zinc-500">Ticket Médio</p>
+                        <p class="text-2xl font-bold text-cyan-500 mt-1">R$ 5.600</p>
+                    </div>
+                </div>
+
+                <!-- Lista de Clientes -->
+                <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg overflow-hidden">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-zinc-800 bg-zinc-900/50">
+                                <th class="text-left py-4 px-6 text-sm font-medium text-zinc-500">Cliente</th>
+                                <th class="text-left py-4 px-6 text-sm font-medium text-zinc-500">Segmento</th>
+                                <th class="text-left py-4 px-6 text-sm font-medium text-zinc-500">Valor Mensal</th>
+                                <th class="text-left py-4 px-6 text-sm font-medium text-zinc-500">Status</th>
+                                <th class="text-left py-4 px-6 text-sm font-medium text-zinc-500">Contrato</th>
+                                <th class="text-left py-4 px-6 text-sm font-medium text-zinc-500">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Cliente 1 -->
+                            <tr class="border-b border-zinc-800 hover:bg-zinc-900/50 cursor-pointer" onclick="window.location.href='cliente-detalhe.html'">
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-600 to-cyan-600 flex items-center justify-center">
+                                            <i class="fas fa-building text-white"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-white">TechStart Solutions</p>
+                                            <p class="text-xs text-zinc-500">techstart.com.br</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6 text-zinc-400">Tecnologia</td>
+                                <td class="py-4 px-6 font-semibold text-white">R$ 8.500</td>
+                                <td class="py-4 px-6">
+                                    <span class="text-xs px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                                        Ativo
+                                    </span>
+                                </td>
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1 h-2 bg-zinc-800 rounded-full overflow-hidden max-w-24">
+                                            <div class="h-full bg-blue-500 rounded-full" style="width: 60%"></div>
+                                        </div>
+                                        <span class="text-xs text-zinc-500">6/12 meses</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-2">
+                                        <button class="p-2 hover:bg-zinc-800 rounded-lg transition-colors" title="Ver detalhes">
+                                            <i class="fas fa-eye text-zinc-400"></i>
+                                        </button>
+                                        <button class="p-2 hover:bg-zinc-800 rounded-lg transition-colors" title="Editar">
+                                            <i class="fas fa-edit text-zinc-400"></i>
+                                        </button>
+                                        <button class="p-2 hover:bg-zinc-800 rounded-lg transition-colors" title="Mensagem">
+                                            <i class="fas fa-comment text-zinc-400"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Cliente 2 -->
+                            <tr class="border-b border-zinc-800 hover:bg-zinc-900/50 cursor-pointer">
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-600 to-red-600 flex items-center justify-center">
+                                            <i class="fas fa-building text-white"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-white">Café Premium</p>
+                                            <p class="text-xs text-zinc-500">cafepremium.com.br</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6 text-zinc-400">Alimentação</td>
+                                <td class="py-4 px-6 font-semibold text-white">R$ 5.200</td>
+                                <td class="py-4 px-6">
+                                    <span class="text-xs px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                                        Ativo
+                                    </span>
+                                </td>
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1 h-2 bg-zinc-800 rounded-full overflow-hidden max-w-24">
+                                            <div class="h-full bg-blue-500 rounded-full" style="width: 25%"></div>
+                                        </div>
+                                        <span class="text-xs text-zinc-500">3/12 meses</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-2">
+                                        <button class="p-2 hover:bg-zinc-800 rounded-lg transition-colors"><i class="fas fa-eye text-zinc-400"></i></button>
+                                        <button class="p-2 hover:bg-zinc-800 rounded-lg transition-colors"><i class="fas fa-edit text-zinc-400"></i></button>
+                                        <button class="p-2 hover:bg-zinc-800 rounded-lg transition-colors"><i class="fas fa-comment text-zinc-400"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Cliente 3 -->
+                            <tr class="border-b border-zinc-800 hover:bg-zinc-900/50 cursor-pointer">
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-pink-600 to-rose-600 flex items-center justify-center">
+                                            <i class="fas fa-building text-white"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-white">ModaStyle</p>
+                                            <p class="text-xs text-zinc-500">modastyle.com.br</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6 text-zinc-400">Moda</td>
+                                <td class="py-4 px-6 font-semibold text-white">R$ 6.800</td>
+                                <td class="py-4 px-6">
+                                    <span class="text-xs px-2 py-1 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                                        Pausado
+                                    </span>
+                                </td>
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1 h-2 bg-zinc-800 rounded-full overflow-hidden max-w-24">
+                                            <div class="h-full bg-orange-500 rounded-full" style="width: 90%"></div>
+                                        </div>
+                                        <span class="text-xs text-zinc-500">11/12 meses</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-2">
+                                        <button class="p-2 hover:bg-zinc-800 rounded-lg transition-colors"><i class="fas fa-eye text-zinc-400"></i></button>
+                                        <button class="p-2 hover:bg-zinc-800 rounded-lg transition-colors"><i class="fas fa-edit text-zinc-400"></i></button>
+                                        <button class="p-2 hover:bg-zinc-800 rounded-lg transition-colors"><i class="fas fa-comment text-zinc-400"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Cliente 4 -->
+                            <tr class="border-b border-zinc-800 hover:bg-zinc-900/50 cursor-pointer">
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-600 to-teal-600 flex items-center justify-center">
+                                            <i class="fas fa-building text-white"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-white">FitLife Academia</p>
+                                            <p class="text-xs text-zinc-500">fitlife.com.br</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6 text-zinc-400">Fitness</td>
+                                <td class="py-4 px-6 font-semibold text-white">R$ 4.500</td>
+                                <td class="py-4 px-6">
+                                    <span class="text-xs px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                                        Ativo
+                                    </span>
+                                </td>
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1 h-2 bg-zinc-800 rounded-full overflow-hidden max-w-24">
+                                            <div class="h-full bg-blue-500 rounded-full" style="width: 40%"></div>
+                                        </div>
+                                        <span class="text-xs text-zinc-500">5/12 meses</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-2">
+                                        <button class="p-2 hover:bg-zinc-800 rounded-lg transition-colors"><i class="fas fa-eye text-zinc-400"></i></button>
+                                        <button class="p-2 hover:bg-zinc-800 rounded-lg transition-colors"><i class="fas fa-edit text-zinc-400"></i></button>
+                                        <button class="p-2 hover:bg-zinc-800 rounded-lg transition-colors"><i class="fas fa-comment text-zinc-400"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Paginação -->
+                <div class="flex items-center justify-between">
+                    <p class="text-sm text-zinc-500">Mostrando 4 de 12 clientes</p>
+                    <div class="flex items-center gap-2">
+                        <button class="px-3 py-1 bg-zinc-900/50 border border-zinc-800 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="px-3 py-1 bg-blue-600 text-white rounded-lg">1</button>
+                        <button class="px-3 py-1 bg-zinc-900/50 border border-zinc-800 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">2</button>
+                        <button class="px-3 py-1 bg-zinc-900/50 border border-zinc-800 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">3</button>
+                        <button class="px-3 py-1 bg-zinc-900/50 border border-zinc-800 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
